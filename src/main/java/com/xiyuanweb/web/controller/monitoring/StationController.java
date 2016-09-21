@@ -339,11 +339,4 @@ public class StationController extends XyController
         super.respJsonObject(toListMap(list));
     }
 
-    public void getArea(){
-        System.out.print(123123);
-        System.out.print(123123);
-        System.out.print(123123);
-        System.out.print(123123);
-    }
-
 }
