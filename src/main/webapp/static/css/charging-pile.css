@@ -1,0 +1,346 @@
+@charset "UTF-8";
+
+.xy-module {
+    position: absolute;
+}
+
+#xy-body-row-1 {
+    height: 722px;
+    position: relative;
+    /*background: url("temp.png") left top no-repeat;*/
+}
+
+#xy-body-row-2 {
+    height: 1045px;
+    position: relative;
+}
+
+#xy-module-01 {
+    width: 1424px;
+    height: 720px;
+    top: 0px;
+    left: 0px;
+    background: url("imgs/charging-pile/module-1/module-1-bg.png") no-repeat;
+}
+
+#xy-module-01-content {
+    width: 1424px;
+    height: 720px;
+    position: relative;
+}
+
+#xy-module-01-content .xy-soc {
+    width: 350px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    position: absolute;
+    left: 154px;
+    top: 441px;
+    font-size: 48px;
+    font-weight: bold;
+    font-family: Arial;
+    color: #ffffff;
+}
+
+#xy-module-01-content .xy-status {
+    width: 141px;
+    height: 121px;
+    line-height: 121px;
+    text-align: center;
+    position: absolute;
+    left: 906px;
+    top: 466px;
+    font-size: 36px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+#xy-module-02,
+#xy-module-03 {
+    width: 900px;
+    height: 720px;
+    background: url("imgs/charging-pile/module-2/dashboard-bg.png") no-repeat;
+}
+
+#xy-module-02-content,
+#xy-module-03-content {
+    width: 900px;
+    height: 720px;
+    position: relative;
+}
+
+#xy-module-02-dashboard,
+#xy-module-03-dashboard {
+    width: 900px;
+    height: 720px;
+}
+
+#xy-module-02 .xy-out-voltage,
+#xy-module-03 .xy-out-voltage {
+    width: 450px;
+    height: 70px;
+    line-height: 70px;
+    position: absolute;
+    left: 244px;
+    bottom: 68px;
+    font-size: 42px;
+    font-weight: bold;
+    color: #48b866;
+}
+
+#xy-module-02 .xy-out-voltage span,
+#xy-module-03 .xy-out-voltage span {
+    color: #efb620;
+}
+
+#xy-module-02 {
+    left: 1855px;
+}
+
+#xy-module-03 {
+    left: 3186px;
+}
+
+#xy-module-04 {
+    width: 905px;
+    height: 720px;
+    top: 2px;
+    right: 102px;
+    background: url("imgs/charging-pile/module-1/module-4-bg.png") no-repeat;
+}
+
+#xy-module-04-content {
+    width: 905px;
+    height: 720px;
+    position: relative;
+    color: #ffffff;
+}
+
+#xy-module-04-content .xy-title {
+    height: 257px;
+    line-height: 257px;
+    font-size: 60px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#xy-module-04-content span {
+    color: #efb620;
+}
+
+#xy-module-04-content .xy-item-1 {
+    position: absolute;
+    left: 69px;
+    top: 330px;
+    font-size: 36px;
+}
+
+#xy-module-04-content .xy-item-2 {
+    position: absolute;
+    left: 69px;
+    top: 423px;
+    font-size: 36px;
+}
+
+#xy-module-05 {
+    width: 956px;
+}
+
+#xy-module-05-content {
+    height: 1045px;
+    position: relative;
+}
+
+#xy-module-05 .xy-hr {
+    left: 0px;
+    right: 0px;
+    position: absolute;
+    height: 2px;
+    background: url("imgs/charging-pile/module-5/hr-bg.png") no-repeat;
+}
+
+#xy-module-05 .xy-hr-1 {
+    top: 243px;
+}
+
+#xy-module-05 .xy-hr-2 {
+    top: 523px;
+}
+
+#xy-module-05 .xy-hr-3 {
+    top: 804px
+}
+
+#xy-module-05 .xy-img {
+    width: 161px;
+    height: 160px;
+    position: absolute;
+    left: 103px;
+}
+
+#xy-module-05 .xy-img-1 {
+    top: 23px;
+}
+
+#xy-module-05 .xy-img-2 {
+    top: 303px;
+}
+
+#xy-module-05 .xy-img-3 {
+    top: 584px;
+}
+
+#xy-module-05 .xy-img-4 {
+    top: 864px;
+}
+
+#xy-module-05 .xy-label {
+    position: absolute;
+    font-size: 28px;
+    left: 369px;
+    font-weight: bold;
+}
+
+#xy-module-05 .xy-label-1 {
+    top: 27px;
+    color: #ab2131;
+}
+
+#xy-module-05 .xy-label-2 {
+    top: 307px;
+    color: #22992c;
+}
+
+#xy-module-05 .xy-label-3 {
+    top: 588px;
+    color: #0078b2;
+}
+
+#xy-module-05 .xy-label-4 {
+    top: 868px;
+    color: #e15224;
+}
+
+#xy-module-05 .xy-value {
+    position: absolute;
+    font-size: 60px;
+    left: 414px;
+    font-weight: bold;
+    color: #d8e5f1;
+    font-family: Arial;
+    letter-spacing: 6px;
+}
+
+#xy-module-05 .xy-value-1 {
+    top: 106px;
+}
+
+#xy-module-05 .xy-value-2 {
+    top: 386px;
+}
+
+#xy-module-05 .xy-value-3 {
+    top: 667px;
+}
+
+#xy-module-05 .xy-value-4 {
+    top: 947px;
+}
+
+#xy-module-06 {
+    width: 4200px;
+    position: absolute;
+    left: 1112px;
+}
+
+#xy-module-06-content {
+    height: 1045px;
+    position: relative;
+}
+
+#xy-module-06 .xy-button {
+    width: 620px;
+    height: 138px;
+    line-height: 138px;
+    background: #0ea910;
+    color: #ffffff;
+    text-align: center;
+    font-size: 41.5px;
+    position: absolute;
+}
+
+#xy-module-06 .xy-button-1 {
+    left: 0px;
+    top: 204px;
+}
+
+#xy-module-06 .xy-button-2 {
+    left: 770px;
+    top: 204px;
+}
+
+#xy-module-06 .xy-button-3 {
+    left: 1540px;
+    top: 204px;
+}
+
+#xy-module-06 .xy-button-4 {
+    left: 2310px;
+    top: 204px;
+}
+
+#xy-module-06 .xy-button-5 {
+    left: 3080px;
+    top: 204px;
+}
+
+#xy-module-06 .xy-button-6 {
+    left: 0px;
+    top: 477px;
+}
+
+#xy-module-06 .xy-button-7 {
+    left: 770px;
+    top: 477px;
+}
+
+#xy-module-06 .xy-button-8 {
+    left: 1540px;
+    top: 477px;
+}
+
+#xy-module-06 .xy-button-9 {
+    left: 2310px;
+    top: 477px;
+}
+
+#xy-module-06 .xy-button-10 {
+    left: 3080px;
+    top: 477px;
+}
+
+#xy-module-06 .xy-button-11 {
+    left: 0px;
+    top: 750px;
+}
+
+#xy-module-06 .xy-button-12 {
+    left: 770px;
+    top: 750px;
+}
+
+#xy-module-06 .xy-button-13 {
+    left: 1540px;
+    top: 750px;
+}
+
+#xy-module-06 .xy-button-14 {
+    left: 2310px;
+    top: 750px;
+}
+
+#xy-module-06 .xy-button-15 {
+    left: 3080px;
+    top: 750px;
+}

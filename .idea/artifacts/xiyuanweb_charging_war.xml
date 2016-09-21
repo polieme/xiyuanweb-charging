@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="xiyuanweb-charging:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="xiyuanweb-charging.war">
+      <element id="artifact" artifact-name="xiyuanweb-charging:war exploded" />
+    </root>
+  </artifact>
+</component>

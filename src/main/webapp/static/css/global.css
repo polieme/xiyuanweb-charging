@@ -1,0 +1,102 @@
+@charset "UTF-8";
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: "微软雅黑";
+}
+
+a {
+    text-decoration: none;
+}
+
+div {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    background: url("imgs/common/body-bg.png");
+}
+
+
+.xy-clear {
+    clear: both;
+}
+
+#xy-page {
+    width: 5760px;
+    height: 2160px;
+    padding: 0px 144px;
+}
+
+#xy-header {
+    height: 260px;
+    position: relative;
+}
+
+#xy-header .xy-main-title {
+    width: 808px;
+    font-size: 60px;
+    font-weight: bold;
+    position: absolute;
+    left: 8px;
+    top: 75px;
+}
+
+#xy-header .xy-main-title .xy-left {
+    color: #3a91e2;
+}
+
+#xy-header .xy-main-title .xy-right {
+    color: #c2d2e0;
+}
+
+#xy-header .xy-nav-item {
+    position: absolute;
+    top: 75px;
+}
+
+#xy-header .xy-nav-item a {
+    font-size: 48px;
+    color: #d8e5f1;
+}
+
+#xy-header .xy-nav-item a.xy-selected {
+    color: #edde32;
+}
+
+#xy-header .xy-nav-item.xy-operation {
+    left: 805px;
+}
+
+#xy-header .xy-nav-item.xy-device {
+    left: 1233px;
+}
+
+#xy-header .xy-nav-item.xy-video {
+    left: 1657px;
+}
+
+#xy-header .xy-nav-item-bg {
+    width: 856px;
+    height: 6px;
+    position: absolute;
+    top: 173px;
+    background: url("imgs/common/nav-selected-bg.png") no-repeat;
+}
+
+#xy-header .xy-nav-item-bg.xy-operation {
+    left: 522px;
+}
+
+#xy-header .xy-nav-item-bg.xy-device {
+    left: 950px;
+}
+
+#xy-header .xy-nav-item-bg.xy-video {
+    left: 1374px;
+}
