@@ -338,5 +338,4 @@ public class StationController extends XyController
         List<Record> list = Db.find(sql.toString());
         super.respJsonObject(toListMap(list));
     }
-
 }
