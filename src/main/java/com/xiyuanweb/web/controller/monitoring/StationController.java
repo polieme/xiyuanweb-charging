@@ -340,6 +340,12 @@ public class StationController extends XyController
     }
 
     public void getArea(){
+
+        System.out.print(1231231);
+        System.out.print(1231231);
+        System.out.print(1231231);
+        System.out.print(1231231);
+        System.out.print(1231231);
     }
 
 }
