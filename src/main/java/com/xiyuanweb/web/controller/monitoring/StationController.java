@@ -340,9 +340,6 @@ public class StationController extends XyController
     }
 
     public void getArea(){
-
-
-
     }
 
 }
