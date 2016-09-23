@@ -71,7 +71,7 @@
                     <div id="xy-row-2-left">
                         <div class="xy-title">直流充电桩</div>
                         <div class="xy-sum">合计：1933&nbsp;台</div>
-                        <div class="xy-sub-module xy-sub-module-1">
+                        <div class="xy-sub-module xy-sub-module-1" style="display: none">
                             <div class="xy-sub-module-content">
                                 <div class="xy-sub-module-title">直流电桩001号</div>
                                 <div class="xy-sub-module-icon">
@@ -103,7 +103,7 @@
                                 <div class="xy-progress-bar-text">80%</div>
                             </div>
                         </div>
-                        <div class="xy-sub-module xy-sub-module-2">
+                        <div class="xy-sub-module xy-sub-module-2" style="display: none">
                             <div class="xy-sub-module-content">
                                 <div class="xy-sub-module-title">直流电桩002号</div>
                                 <div class="xy-sub-module-icon">
@@ -135,7 +135,7 @@
                                 <div class="xy-progress-bar-text">81%</div>
                             </div>
                         </div>
-                        <div class="xy-sub-module xy-sub-module-3">
+                        <div class="xy-sub-module xy-sub-module-3" style="display: none">
                             <div class="xy-sub-module-content">
                                 <div class="xy-sub-module-title">直流电桩003号</div>
                                 <div class="xy-sub-module-icon">
@@ -167,7 +167,7 @@
                                 <div class="xy-progress-bar-text">40%</div>
                             </div>
                         </div>
-                        <div class="xy-sub-module xy-sub-module-4">
+                        <div class="xy-sub-module xy-sub-module-4" style="display: none">
                             <div class="xy-sub-module-content">
                                 <div class="xy-sub-module-title">直流电桩004号</div>
                                 <div class="xy-sub-module-icon">
@@ -203,7 +203,7 @@
                     <div id="xy-row-2-right">
                         <div class="xy-title">交流充电桩</div>
                         <div class="xy-sum">合计：3763&nbsp;台</div>
-                        <div class="xy-sub-module xy-sub-module-1">
+                        <div class="xy-sub-module xy-sub-module-1" style="display: none">
                             <div class="xy-sub-module-content">
                                 <div class="xy-sub-module-title">交流电桩001号</div>
                                 <div class="xy-sub-module-icon">
@@ -235,7 +235,7 @@
                                 <div class="xy-progress-bar-text">50%</div>
                             </div>
                         </div>
-                        <div class="xy-sub-module xy-sub-module-2">
+                        <div class="xy-sub-module xy-sub-module-2" style="display: none">
                             <div class="xy-sub-module-content">
                                 <div class="xy-sub-module-title">交流电桩002号</div>
                                 <div class="xy-sub-module-icon">
@@ -267,7 +267,7 @@
                                 <div class="xy-progress-bar-text">90%</div>
                             </div>
                         </div>
-                        <div class="xy-sub-module xy-sub-module-3">
+                        <div class="xy-sub-module xy-sub-module-3" style="display: none">
                             <div class="xy-sub-module-content">
                                 <div class="xy-sub-module-title">交流电桩003号</div>
                                 <div class="xy-sub-module-icon">
@@ -299,7 +299,7 @@
                                 <div class="xy-progress-bar-text">75%</div>
                             </div>
                         </div>
-                        <div class="xy-sub-module xy-sub-module-4">
+                        <div class="xy-sub-module xy-sub-module-4" style="display: none">
                             <div class="xy-sub-module-content">
                                 <div class="xy-sub-module-title">交流电桩004号</div>
                                 <div class="xy-sub-module-icon">
