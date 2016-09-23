@@ -338,14 +338,4 @@ public class StationController extends XyController
         List<Record> list = Db.find(sql.toString());
         super.respJsonObject(toListMap(list));
     }
-
-    public void getArea(){
-
-        System.out.print(1231231);
-        System.out.print(1231231);
-        System.out.print(1231231);
-        System.out.print(1231231);
-        System.out.print(1231231);
-    }
-
 }
