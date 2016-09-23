@@ -53,19 +53,19 @@
                     </div>
                     <div class="xy-module" id="xy-module-04">
                         <div class="xy-count xy-count-1">0</div>
-                        <div class="xy-label xy-label-1">忙碌（台）</div>
+                        <div class="xy-label xy-label-1">忙碌</div>
                         <div class="xy-count xy-count-2">0</div>
-                        <div class="xy-label xy-label-2">空闲（台）</div>
+                        <div class="xy-label xy-label-2">空闲</div>
                         <div class="xy-count xy-count-3">0</div>
-                        <div class="xy-label xy-label-3">故障（台）</div>
+                        <div class="xy-label xy-label-3">故障</div>
                         <div class="xy-count xy-count-4">0</div>
-                        <div class="xy-label xy-label-4">离线（台）</div>
+                        <div class="xy-label xy-label-4">离线</div>
                         <div class="xy-count xy-count-5">0</div>
-                        <div class="xy-label xy-label-5">连接（台）</div>
+                        <div class="xy-label xy-label-5">连接</div>
                         <div class="xy-count xy-count-6">0</div>
-                        <div class="xy-label xy-label-6">检修（台）</div>
+                        <div class="xy-label xy-label-6">检修</div>
                         <div class="xy-count xy-count-7">0</div>
-                        <div class="xy-label xy-label-7">预约（台）</div>
+                        <div class="xy-label xy-label-7">预约</div>
                     </div>
                     <div class="xy-clear"></div>
                 </div>
