@@ -1,5 +1,5 @@
 var Xy = {
-    INTERVAL_TIME: 5000,
+    INTERVAL_TIME: 500000,
     DEV: true
 };
 
