@@ -91,23 +91,43 @@ Xy.Module04.refresh = function () {
         // 1：空闲桩 ，2：只连接未充电，3：充电进行中, 4：GPRS通讯中断,5：检修中,6：预约，7：故障
         // 1: 忙碌, 2：空闲，3：故障，4：离线，5：连接，6：检修，7：预约
         // 索引返回的数据，值页面class序号
-        var mapper = {
-            '1': 2,
-            '2': 5,
-            '3': 1,
-            '4': 4,
-            '5': 6,
-            '6': 7,
-            '7': 3,
-        };
         if (data) {
-            $('#xy-module-04 .xy-count-1').html(253);
-            $('#xy-module-04 .xy-count-2').html(3056);
-            $('#xy-module-04 .xy-count-3').html(0);
-            $('#xy-module-04 .xy-count-4').html(6969);
-            $('#xy-module-04 .xy-count-5').html(50);
-            $('#xy-module-04 .xy-count-6').html(0);
-            $('#xy-module-04 .xy-count-7').html(0);
+            //此处不进行动态赋值，由于涉及几百个桩的运行状态异常以及脏数据，
+            var busyCount = 0 ;//充电中
+            var freeCount = 0 ;//空闲
+            var wrongCount = 0 ;//故障
+            var offLineCount = 0 ;//离线
+            var connectCount  = 0 ;//连接未充电
+            var repairCount = 0 ;//检修
+            var orderCount = 0 ;//预约
+            for(var i = 0;i<data.length;i++){
+                if(data[i].run_status=="1"){
+                    freeCount = freeCount+data[i].count;
+                }else if(data[i].run_status=="2"){
+                    connectCount = connectCount +data[i].count;
+                }else if(data[i].run_status=="3"){
+                    busyCount = busyCount +data[i].count;
+                }else if(data[i].run_status=="4"){
+                    offLineCount = offLineCount +data[i].count;
+                }else if(data[i].run_status=="5"){
+                    repairCount = repairCount +data[i].count;
+                }else if(data[i].run_status=="6"){
+                    orderCount = orderCount +data[i].count;
+                }else if(data[i].run_status=="7"){
+                    wrongCount = wrongCount +data[i].count;
+                }else if(data[i].run_status=="8"){
+                    wrongCount = wrongCount +data[i].count;
+                }else if(data[i].run_status=="9"){
+                    wrongCount = wrongCount +data[i].count;
+                }
+            }
+            $('#xy-module-04 .xy-count-1').html(busyCount);
+            $('#xy-module-04 .xy-count-2').html(freeCount);
+            $('#xy-module-04 .xy-count-3').html(wrongCount);
+            $('#xy-module-04 .xy-count-4').html(offLineCount);
+            $('#xy-module-04 .xy-count-5').html(connectCount);
+            $('#xy-module-04 .xy-count-6').html(repairCount);
+            $('#xy-module-04 .xy-count-7').html(orderCount);
         }
     })
 }
@@ -353,7 +373,6 @@ Xy.Module08.refresh = function () {
      * @param data 图表数据 [{date: '周一',count: 4025}, {date: '周二',count: 1882}]
      */
     var refreshChart1 = function (data) {
-        debugger;
         if (!chart1) {
             chart1 = AmCharts.makeChart("xy-chat-1-content", {
                 theme: 'light',
@@ -427,14 +446,14 @@ Xy.Module08.refresh = function () {
                     fontSize: 16
                 }],
                 graphs: [/*{
-                    balloonText: '[[category]]: <b>[[value]]</b>',
-                    fillAlphas: 0.85,
-                    lineAlpha: 0.1,
-                    type: 'column',
-                    topRadius: 1,
-                    valueField: 'count',
-                    lineColor: '#10499C'
-                },*/{
+                 balloonText: '[[category]]: <b>[[value]]</b>',
+                 fillAlphas: 0.85,
+                 lineAlpha: 0.1,
+                 type: 'column',
+                 topRadius: 1,
+                 valueField: 'count',
+                 lineColor: '#10499C'
+                 },*/{
                     balloonText: '[[category]]: <b>[[value]]</b>',
                     fillAlphas: 0.85,
                     lineAlpha: 0.1,
@@ -482,20 +501,18 @@ Xy.Module08.refresh = function () {
         }
     }
 
-    var WEEKS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    /**var WEEKS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
     var getWeek = function (ymd) {
         var ymds = ymd.split('-');
         var date = new Date(ymds[0], parseInt(ymds[1])-1, ymds[2]);
         return WEEKS[date.getDay()];
-    }
+    }*/
 
     var initChart = function () {
-
         var colorArr = ['#FF0F00', '#FF6600', '#FF9E01', '#FCD202', '#F8FF01', '#B0DE09', '#04D215'];
         var chart1Arr = [];
         var chart2Arr = [];
-
         Xy.requestApi('/operation/get_statictis_charge', {type: '1'}, function (data) {
             for (var i = 0; i < data.length; i++) {
                 var chartData = {
@@ -503,34 +520,29 @@ Xy.Module08.refresh = function () {
                     count: 0,
                     color: ''
                 }
-                chartData.date = getWeek(data[i].statDay);
+
+                chartData.date = data[i].statDay;
                 chartData.count = data[i].chargeQuantity;
                 chartData.color = colorArr[i];
                 chart1Arr.push(chartData);
             }
             refreshChart1(chart1Arr);
         });
-        
-        var rn = function () {
-            var m = Math.random();
-            if(m < 0.3) {
-                return rn();
-            }
-            return m;
-        }
-
+        //该模块查询比较慢
         Xy.requestApi('/operation/get_statictis_charge', {type: '2'}, function (data) {
+            alert("start function!")
             for (var i = 0; i < data.length; i++) {
+               //alert(data[i].statDay);
                 var chartData = {
                     data: '',
                     count: 0,
                     color: ''
                 }
-                chartData.date = getWeek(data[i].statDay);
-                chartData.count = data[i].chargeAmount;
+                chartData.date = data[i].statDay;
+                chartData.count = data[i].code_time+data[i].card_time;
                 try {
-                    chartData.sk_count = parseInt(data[i].chargeAmount * 0.3);
-                    chartData.sm_count = data[i].chargeAmount - chartData.sk_count;
+                    chartData.sk_count = data[i].card_time;
+                    chartData.sm_count = data[i].code_time;
                 } catch(e) {}
                 chartData.color = colorArr[i];
                 chart2Arr.push(chartData);
