@@ -27,7 +27,7 @@ public class OperationController extends XyController
         Date             now         = new Date();
         SimpleDateFormat sdf         = new SimpleDateFormat("yyyy-MM-dd");
         String           nowStr      = sdf.format(now);
-        String           sqlDaily    = "select round(SUM(A.quantity/100),2) charge_quantity,COUNT(*) charge_amount from t_charging A WHERE A.create_time LIKE '"+nowStr+"%' AND A.DEL = 0 AND A.quantity/100<200 AND A.valid = 0  AND A.quantity !=0";
+        String           sqlDaily    = "select round(SUM(A.quantity/100),2) charge_quantity,COUNT(*) charge_amount from t_charging A WHERE A.create_time LIKE '"+nowStr+"%' AND A.DEL = 0 AND A.quantity/100<200 AND A.valid = 0";
         String           condition   = "city_id='"+cityId+"' and station_type='0'";
         Record           recordDaily = Db.findFirst(sqlDaily);
 
@@ -56,9 +56,48 @@ public class OperationController extends XyController
     public void get_statictis_charge()
     {
         String       type      = getPara("type");
-        String       sql       = "select stats_day,(charge_quantity/100) charge_quantity,charge_amount from t_charging_station_his where city_id='110000' and station_type='0' order by stats_day desc  limit 0,7";
-        List<Record> list      = Db.find(sql);
-
+        String       sql       = "select stats_day,(charge_quantity/100) charge_quantity from t_charging_station_his where city_id='110000' and station_type='0' order by stats_day desc  limit 0,7";
+        //充电电量从his表中查询，由于充电次数需要区分扫码和刷卡，所以不再从his表中进行查询
+        //
+        String sqlForQuantity = "select stats_day,(charge_quantity/100) charge_quantity from " +
+                "t_charging_station_his where city_id='110000' and station_type='0' order by stats_day desc  limit 0,7";
+        //
+        //String sqlForStartTime = "";
+        StringBuffer sqlForStartTime = new StringBuffer();
+        sqlForStartTime.append("      SELECT");
+        sqlForStartTime.append("      	LEFT (A.create_time, 10) stats_day,");
+        sqlForStartTime.append("      	SUM(");
+        sqlForStartTime.append("      		CASE");
+        sqlForStartTime.append("      		WHEN B.user_name IS NULL");
+        sqlForStartTime.append("      		AND quantity IS NOT NULL THEN");
+        sqlForStartTime.append("      			1");
+        sqlForStartTime.append("      		ELSE");
+        sqlForStartTime.append("      			0");
+        sqlForStartTime.append("      		END");
+        sqlForStartTime.append("      	) card_time,");
+        sqlForStartTime.append("      	SUM(");
+        sqlForStartTime.append("      		CASE");
+        sqlForStartTime.append("      		WHEN B.user_name IS NULL THEN");
+        sqlForStartTime.append("      			0");
+        sqlForStartTime.append("      		ELSE");
+        sqlForStartTime.append("      			1");
+        sqlForStartTime.append("      		END");
+        sqlForStartTime.append("      	) code_time");
+        sqlForStartTime.append("      FROM");
+        sqlForStartTime.append("      	t_charging A");
+        sqlForStartTime.append("      LEFT JOIN t_user_person B ON A.user_id = B.userid");
+        sqlForStartTime.append("      GROUP BY");
+        sqlForStartTime.append("      	LEFT (A.create_time, 10)");
+        sqlForStartTime.append("      ORDER BY");
+        sqlForStartTime.append("      	LEFT (A.create_time, 10) DESC");
+        sqlForStartTime.append("      LIMIT 1,");
+        sqlForStartTime.append("       7;");
+        List<Record> list = null;
+        if(("1").equals(type)){
+             list      = Db.find(sqlForQuantity);
+        }else if(("2").equals(type)){
+             list      = Db.find(sqlForStartTime.toString());
+        }
         List<Map<String, Object>> resultlist = new ArrayList<Map<String, Object>>();
         if (list != null)
         {
@@ -73,8 +112,10 @@ public class OperationController extends XyController
                     result.put("chargeQuantity", chargeQuantity);
                 } else if ("2".equals(type))
                 {
-                    String chargeAmount = record.get("charge_amount").toString();
-                    result.put("chargeAmount", chargeAmount);
+                    String card_time = record.get("card_time").toString();
+                    String code_time = record.get("code_time").toString();
+                    result.put("card_time", card_time);
+                    result.put("code_time",code_time);
                 }
                 resultlist.add(result);
             }
@@ -91,7 +132,7 @@ public class OperationController extends XyController
     public void get_count()
     {
         String              sqlCountStation    = "SELECT count(*) count FROM t_charging_station WHERE city_id = '110000' and operator_name = '华商三优'";
-        String              sqlCountPile       = "SELECT count(*) count FROM t_charging_pile  WHERE FACTOTRY = '华商三优'  and city_id ='110000' and del=0 and run_status";
+        String              sqlCountPile       = "SELECT count(*) count FROM t_charging_pile  WHERE FACTOTRY = '华商三优'  and city_id ='110000' and del=0 and run_status not in (0,-1)" ;
         Record              recordCountStation = Db.findFirst(sqlCountStation);
         Record              recordCountPile    = Db.findFirst(sqlCountPile);
         Map<String, Object> result             = new HashMap<>();
@@ -113,7 +154,7 @@ public class OperationController extends XyController
      */
     public void get_pile_status()
     {
-        String sqlPile = "select run_status,count(1) count from t_charging_pile " + "where del='0' and city_id='"+cityId+"' and run_status not in ('-1','0','8','9') and factotry = '华商三优' group by run_status";
+        String sqlPile = "select run_status,count(1) count from t_charging_pile " + "where del='0' and city_id='"+cityId+"' and run_status not in ('-1','0') and factotry = '华商三优' group by run_status";
         List<Record> pieStatusList = Db.find(sqlPile);
         List<Map<String,Object>> resultList = toListMap(pieStatusList);
         super.respJsonObject(resultList);
