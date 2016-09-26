@@ -9,12 +9,6 @@ Xy.Module06 = {};
 Xy.Module07 = {};
 Xy.Module08 = {};
 
-function randomNumber(begin, end) {
-    return parseInt(Math.random() * (end - begin) + begin);
-}
-
-
-
 function generateChartData() {
 
 }
@@ -165,9 +159,10 @@ Xy.Module05.refresh = function () {
     var render = function($module, type,stationId){
         Xy.requestApi('/station/get_alternating_direct', {type: type,stationId:stationId}, function (datas) {
             var count = datas.length > 4 ? 4 : datas.length;
-            debugger;
             for (var i = 0; i < count; i++) {
+                debugger;
                 var $subModule = $('.xy-sub-module-' + (1+i), $module);
+                $subModule[0].style.display="";//如果充电桩少于四个的时候，可以正常显示对应数量的充电桩
                 var data = datas[i];
                 try {
                     $('.xy-sub-module-title', $subModule).html(data.pile_name);
@@ -178,7 +173,7 @@ Xy.Module05.refresh = function () {
                         $('.xy-value-3', $subModule).html('空闲');
                         $('.xy-value-3', $subModule).css('background-color', '#5bc35d')
 
-                    } else if (data.status == '2'||data.status == '3') {
+                    } else {
                         $('.xy-value-3', $subModule).html('忙碌');
                         $('.xy-value-3', $subModule).css('background-color', '#c72d3a')
                     }
@@ -231,14 +226,12 @@ Xy.Module08.refresh = function () {
     }
 
     var refreshChart2 = function (data) {
-debugger;
         var chartData = [];
         var firstDate = new Date();
         firstDate.setDate(firstDate.getDate() - 100);
 
         var day = 1000 * 60 * 60 * 24;
         var now = new Date();
-        debugger;
         var stationId = getQueryString("stationId");
         Xy.requestApiSync('/station/get_30days_chargetimes', {stationId:stationId}, function (data) {
 
@@ -422,10 +415,9 @@ debugger;
             }]);
         })
     }
-
+    initJzlCount();//初始化交直流充电桩数量
     initChartPie();
     refreshChart2(generateChartData());
-
     setInterval(function () {
         // TODO coding......
         initChartPie();
@@ -453,6 +445,21 @@ $(function () {
     }, Xy.INTERVAL_TIME);
 
 });
+
+//加载直流充电桩和交流充电桩数量
+var initJzlCount = function(){
+    var stationId = getQueryString("stationId");
+    Xy.requestApi('/station/initJzlCount', {stationId:stationId}, function (data) {
+        var jzLObj = $(".xy-sum");
+        if(jzLObj){
+            jzLObj[0].innerHTML = "合计："+data[0].zlCount+"&nbsp;台";
+            jzLObj[1].innerHTML = "合计："+data[0].jlCount+"&nbsp;台";
+        }
+
+    })
+}
+
+
 
 //获取url中的参数
 function getQueryString(name) {

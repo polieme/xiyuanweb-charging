@@ -103,57 +103,57 @@ public class StationController extends XyController
         String dy = "";
         String dl = "";
         String soc = "";
-        String cdztStr = "";
-        String cdddStr = "";
-        String gzztStr = "";
         List<Map<String,Object>> resultList = new ArrayList<Map<String,Object>>();
-        String sql  = "select id,pile_name,run_status,pile_code from t_charging_pile where del = '0' and pile_type=? and city_id="+cityId+" AND station_id = '"+stationId+"' limit 0,4";
-        List<Record> list =  Db.find(sql,type);
+        StringBuffer sql = new StringBuffer();
+        sql.append(" SELECT");
+        sql.append(" 	id, ");
+        sql.append(" 	pile_name, ");
+        sql.append(" 	run_status, ");
+        sql.append(" 	pile_code ");
+        sql.append(" FROM ");
+        sql.append(" 	t_charging_pile ");
+        sql.append(" WHERE ");
+        sql.append(" 	del = '0' ");
+        sql.append(" AND pile_type =? ");
+        sql.append(" AND city_id = "+cityId+" ");
+        if(!"".equals(stationId)) {
+            sql.append(" AND station_id = '" + stationId + "' ");
+        }
+        sql.append(" AND station_id!=''");
+        sql.append(" LIMIT 0, ");
+        sql.append("  4 ");
+        List<Record> list =  Db.find(sql.toString(),type);
         for(Record record:list){
             String id = record.getStr("id");
             String pileName = record.getStr("pile_name");
             String pile_code = record.getStr("pile_code");
-            String status = record.get("run_status").toString();
-            String sqlRt     = " select current,voltage,connection_status,charge_energy from t_charging_pile_rt where pile_id=? ";
-            String sqlCharge = "select (end_time-start_time) as charge_time,quantity,charge_price charge_price from t_charging " +
-                    "where pile_id = ? and del = '0' order by create_time";
-            String sqlFault = "select t.fault_code,t.err_code,t.err_status,t.record_time from t_fault t " +
-                    "where t.pile_id = ? and solve_status = '1'";
-            Record             cdzt   = Db.findFirst(sqlRt,id);
-            Record             cddd   = Db.findFirst(sqlCharge,id);
-            Record             gzzt   = Db.findFirst(sqlFault,id);
             //使用HTTP请求从M2M中读取数据
             String result1 = "";
             BufferedReader in = null;
             try {
-                String urlNameString = "http://192.168.10.18:3152/m2m/cgi-bin/pile/now_status/1110113008031026";
+                String urlNameString = "http://192.168.10.18:3152/m2m/cgi-bin/pile/now_status/"+pile_code;
                 URL realUrl = new URL(urlNameString);
                 // 打开和URL之间的连接
                 URLConnection connection = realUrl.openConnection();
                 // 设置通用的请求属性
                 connection.setRequestProperty("accept", "*/*");
                 connection.setRequestProperty("connection", "Keep-Alive");
-                connection.setRequestProperty("user-agent",
-                        "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+                connection.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
                 // 建立实际的连接
                 connection.connect();
                 // 获取所有响应头字段
                 Map<String, List<String>> map = connection.getHeaderFields();
-                // 遍历所有的响应头字段
-                for (String key : map.keySet()) {
-                    System.out.println(key + "--->" + map.get(key));
-                }
                 // 定义 BufferedReader输入流来读取URL的响应
-                in = new BufferedReader(new InputStreamReader(
-                        connection.getInputStream()));
+                in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String line;
                 while ((line = in.readLine()) != null) {
                     result1 += line;
                     JSONObject a = new JSONObject(result1);
-                    statusStr = a.getJSONObject("result").getString("connectStatus");
-                    dy = a.getJSONObject("result").getString("voltage");
-                    dl = a.getJSONObject("result").getString("current");
-                    soc = a.getJSONObject("result").getString("soc");
+                    if(a.getJSONObject("result").getString("status")!="-1") {//为-1的时候，表示充电桩状态查询不到
+                        dy = a.getJSONObject("result").getString("voltage");//电压
+                        dl = a.getJSONObject("result").getString("current");//电流
+                        soc = a.getJSONObject("result").getString("soc");//SOC
+                    }
                 }
 
             } catch (Exception e) {
@@ -330,12 +330,50 @@ public class StationController extends XyController
         sql.append(" 		DATE_FORMAT(create_time, '%m-%d')");
         sql.append(" ) TEMP_DATA2 ON TEMP_DATA1.datedays = TEMP_DATA2.datedays ORDER BY TEMP_DATA1.datedays desc");
 
-        for(int i=0; i<50;i++){
-            System.out.print("-----------------------------------"+stationId+"------------------------");
-        }
-
-
         List<Record> list = Db.find(sql.toString());
+        super.respJsonObject(toListMap(list));
+    }
+
+    /**
+     * 获取交直流充电桩的数量
+     */
+    @RequestParams({
+            "*String:stationId"
+    })
+    public void initJzlCount(){
+        String stationId = getPara("stationId");
+        stationId = stationId==null?"":stationId;
+        StringBuffer qryJzlCountSql = new StringBuffer();
+        qryJzlCountSql.append(" SELECT     ");
+        qryJzlCountSql.append(" 	ZL.zlCount, ");
+        qryJzlCountSql.append(" 	JL.jlCount ");
+        qryJzlCountSql.append(" FROM ");
+        qryJzlCountSql.append(" 	( ");
+        qryJzlCountSql.append(" 		SELECT ");
+        qryJzlCountSql.append(" 			COUNT(1) zlCount ");
+        qryJzlCountSql.append(" 		FROM ");
+        qryJzlCountSql.append(" 			t_charging_pile A ");
+        qryJzlCountSql.append(" 		WHERE 1=1");
+        if(!"".equals(stationId)) {
+            qryJzlCountSql.append("  AND	A.station_id = '" + stationId + "' ");
+        }
+        qryJzlCountSql.append(" 		AND A.del = 0 ");
+        qryJzlCountSql.append(" 		AND A.pile_type = 1 ");
+        qryJzlCountSql.append(" 	) ZL ");
+        qryJzlCountSql.append(" LEFT JOIN ( ");
+        qryJzlCountSql.append(" 	SELECT ");
+        qryJzlCountSql.append(" 		COUNT(1) jlCount ");
+        qryJzlCountSql.append(" 	FROM ");
+        qryJzlCountSql.append(" 		t_charging_pile A ");
+        qryJzlCountSql.append(" 	WHERE  1=1");
+        if(!"".equals(stationId)) {
+            qryJzlCountSql.append("  AND	A.station_id = '" + stationId + "' ");
+        }
+        qryJzlCountSql.append(" 	AND A.del = 0 ");
+        qryJzlCountSql.append(" 	AND A.pile_type = 2 ");
+        qryJzlCountSql.append(" ) JL ON 1 = 1 ");
+
+        List<Record> list = Db.find(qryJzlCountSql.toString());
         super.respJsonObject(toListMap(list));
     }
 }
