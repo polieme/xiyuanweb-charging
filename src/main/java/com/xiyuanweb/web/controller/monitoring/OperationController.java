@@ -185,8 +185,7 @@ public class OperationController extends XyController
     {
         List<Map<String, Object>> resultlist = new ArrayList<Map<String, Object>>();
         if(list!=null){
-            for (Record record : list)
-            {
+            for (Record record : list){
                 Map<String, Object> result = new HashMap<String,Object>();
                 for(String key:record.getColumnNames()){
                     result.put(key,record.get(key));
