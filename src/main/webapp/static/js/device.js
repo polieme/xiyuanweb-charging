@@ -141,9 +141,9 @@ Xy.Module04.refresh = function () {
                 }else if(data[i].run_status=="7"){
                     wrongCount = wrongCount +data[i].count;
                 }else if(data[i].run_status=="8"){
-                    wrongCount = wrongCount +data[i].count;
+                    busyCount = busyCount +data[i].count;
                 }else if(data[i].run_status=="9"){
-                    wrongCount = wrongCount +data[i].count;
+                    offLineCount = offLineCount +data[i].count;
                 }
             }
             $('#xy-module-04 .xy-count-1').html(busyCount);
