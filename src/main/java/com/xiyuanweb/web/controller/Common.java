@@ -20,7 +20,6 @@ public class Common {
     public static String getPileStatus(String pileCode){
         BufferedReader in = null;
         String result = "";
-        String flag = "flag++";
         try {
             String urlNameString = "http://192.168.10.18:3152/m2m/cgi-bin/pile/now_status/"+pileCode;
             URL realUrl = new URL(urlNameString);
