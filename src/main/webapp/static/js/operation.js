@@ -116,9 +116,9 @@ Xy.Module04.refresh = function () {
                 }else if(data[i].run_status=="7"){
                     wrongCount = wrongCount +data[i].count;
                 }else if(data[i].run_status=="8"){
-                    wrongCount = wrongCount +data[i].count;
+                    busyCount = busyCount +data[i].count;
                 }else if(data[i].run_status=="9"){
-                    wrongCount = wrongCount +data[i].count;
+                    offLineCount = offLineCount +data[i].count;
                 }
             }
             $('#xy-module-04 .xy-count-1').html(busyCount);
@@ -491,9 +491,9 @@ Xy.Module08.refresh = function () {
                 }
             });
         }
-        if ((!data || data.length == 0) && Xy.DEV) {
+        /**if ((!data || data.length == 0) && Xy.DEV) {
             data = demoData;
-        }
+        }*/
         if(data) {
             chart2.dataProvider = data;
             chart2.validateNow();
@@ -513,6 +513,22 @@ Xy.Module08.refresh = function () {
         var colorArr = ['#FF0F00', '#FF6600', '#FF9E01', '#FCD202', '#F8FF01', '#B0DE09', '#04D215'];
         var chart1Arr = [];
         var chart2Arr = [];
+        Xy.requestApi('/operation/get_statictis_charge', {type: '2'}, function (data) {
+            for (var i = 0; i < data.length; i++) {
+                var chartData = {
+                    data: '',
+                    count: 0,
+                    color: ''
+                }
+                chartData.date = data[i].statDay;
+                chartData.count = data[i].code_time+data[i].card_time;
+                chartData.sk_count = data[i].card_time;
+                chartData.sm_count = data[i].code_time;
+                chartData.color = colorArr[i];
+                chart2Arr.push(chartData);
+            }
+            refreshChart2(chart2Arr);
+        });
         Xy.requestApi('/operation/get_statictis_charge', {type: '1'}, function (data) {
             for (var i = 0; i < data.length; i++) {
                 var chartData = {
@@ -528,27 +544,6 @@ Xy.Module08.refresh = function () {
             }
             refreshChart1(chart1Arr);
         });
-        //该模块查询比较慢
-        Xy.requestApi('/operation/get_statictis_charge', {type: '2'}, function (data) {
-            alert("start function!")
-            for (var i = 0; i < data.length; i++) {
-               //alert(data[i].statDay);
-                var chartData = {
-                    data: '',
-                    count: 0,
-                    color: ''
-                }
-                chartData.date = data[i].statDay;
-                chartData.count = data[i].code_time+data[i].card_time;
-                try {
-                    chartData.sk_count = data[i].card_time;
-                    chartData.sm_count = data[i].code_time;
-                } catch(e) {}
-                chartData.color = colorArr[i];
-                chart2Arr.push(chartData);
-            }
-            refreshChart2(chart2Arr);
-        })
     }
 
     initChart();
