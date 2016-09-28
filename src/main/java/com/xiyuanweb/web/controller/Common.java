@@ -18,6 +18,7 @@ public class Common {
      * @author Daniel
      */
     public static String getPileStatus(String pileCode){
+        System.out.print(12312313);
         BufferedReader in = null;
         String result = "";
 
