@@ -419,13 +419,14 @@ Xy.Module08.refresh = function () {
     // }
 
     var initChartPie = function () {
-        Xy.requestApi('/station/get_30days_order', {}, function (data) {
+        var stationId = getQueryString("stationId");
+        Xy.requestApi('/station/get_30days_order', {stationId:stationId}, function (data) {
             var effective = 0;
             var invalid = 0;
             for (var i = 0; i < data.length; i++) {
-                if (data[i].order_state == '1' || data[i].order_state == '5' || data[i].order_state == '7') {
+                if (data[i].order_state == '4' || data[i].order_state == '5' || data[i].order_state == '7') {
                     effective = effective + data[i].count;
-                } else {
+                } else if(data[i].order_state == '2'||data[i].order_state == '3'||data[i].order_state == '6'||data[i].order_state == '9'||data[i].order_state == '10'){
                     invalid = invalid + data[i].count;
                 }
             }
