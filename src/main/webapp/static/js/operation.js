@@ -306,13 +306,19 @@ Xy.Module07.refresh = function () {
         '5': '连接器故障',
         '6': '绝缘故障',
         '7': '其他',
-        '20': '其他'
+        '8':'离线',
+        '13':'其他',
+        '20':'无故障',
+        '63':'其他',
+        '64':'其他',
+        '67':'其他',
+        '127':'其他'
     };
     Xy.requestApi('/operation/get_fault', {}, function (data) {
         $('#xy-module-07 b').html(6);
         for (var i = 0; i < 6; i++) {
             try {
-                $('#xy-module-07 .xy-status-group-' + (i + 1) + ' .xy-text').html(data[i].pile_name + ':' + mapper[data[i].err_code]);
+                $('#xy-module-07 .xy-status-group-' + (i + 1) + ' .xy-text').html(data[i].pile_name + ':' + mapper[data[i].fault_code]);
                 $('#xy-module-07 .xy-status-group-' + (i + 1) + ' .xy-time').html(data[i].record_time)
             } catch (e) {
             }
