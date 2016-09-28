@@ -75,17 +75,26 @@ public class StationController extends XyController
     * 得到三十日内订单
     * order_state 订单状态0：待处理 ;1：同意 ;2：拒绝 ;3：取消;4:用户充完电未支付;5:用户充完电并支付;6:订单过期未作任何操作 ;7:已评价；8充电中(gprs桩）
     * */
+
+    @RequestParams(
+            "*String:stationId"
+    )
     public void get_30days_order(){
+        String stationId = getPara("stationId");//充电站的stationId
         Date now = new Date();
         Calendar calendar =  Calendar.getInstance();
         calendar.setTime(now);
         calendar.add(Calendar.DATE, -30);
         Date beginDate = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String sql = "select order_state,count(1) count from t_order where del = '0' and order_time > ? " +
-                "group by order_state";
+        StringBuffer sql = new StringBuffer();
+        sql.append("select order_state,count(1) count from t_order where del = '0' and order_time > ? AND station_id!=''");
+            if(!"".equals(stationId)) {
+                sql.append(" AND station_id = '" + stationId + "'");
+            }
+        sql.append("group by order_state");
 
-        List<Record> list = Db.find(sql,sdf.format(beginDate));
+        List<Record> list = Db.find(sql.toString(),sdf.format(beginDate));
         super.respJsonObject(toListMap(list));
     }
 

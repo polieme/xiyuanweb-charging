@@ -56,27 +56,18 @@ Xy.Dashboard.refresh = function(){
     var requestData = function () {
 
         Xy.requestApi('/device/get_detail', {id:id}, function (data) {
-            var v1 = 0.00 ;
-            var v2 = 0.00 ;
-            if(data.pile){
-                $('#xy-module-04 .xy-title').html(data.pile.pile_name);
-            }
-            if(data.charging){
-                v1 = data.charging.current;
-                v2 = data.charging.voltage;
-                $('#xy-module-05-content .xy-value-4').html(data.charging.charge_energy);
+            $('#xy-module-04 .xy-title').html(data.pile.pile_name);//充电桩名称
+            $('#xy-module-05-content .xy-value-3').html(data.pile.curElect);//已充电量
+            $('#xy-module-05-content .xy-value-1').html(data.pile.chargingDuration);//充电时长
+            $('#xy-module-05-content .xy-value-2').html(data.pile.curElect);//已充电量
 
-            }
-            if(data.charging_pay){
-                $('#xy-module-05-content .xy-value-1').html(data.charging_pay.charge_time);
-                $('#xy-module-05-content .xy-value-2').html(data.charging_pay.quantity);
-                $('#xy-module-05-content .xy-value-3').html(data.charging_pay.charge_price);
-            }
-            Xy.Dashboard.updateV(pointer1, v1);
-            $('#xy-module-02 .xy-out-voltage span').html(v1);
+            //充电电压
+            Xy.Dashboard.updateV(pointer1, data.pile.voltage);
+            $('#xy-module-02 .xy-out-voltage span').html(data.pile.voltage);
 
-            Xy.Dashboard.updateV(pointer2, v2);
-            $('#xy-module-03 .xy-out-voltage span').html(v2);
+            //充电电流
+            Xy.Dashboard.updateV(pointer2, data.pile.current);
+            $('#xy-module-03 .xy-out-voltage span').html(data.pile.current);
         });
     };
 

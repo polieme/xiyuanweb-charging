@@ -33,7 +33,7 @@
                 <div class="xy-module" id="xy-module-03">
                     <div id="xy-module-03-content">
                         <div id="xy-module-03-dashboard"></div>
-                        <div class="xy-out-voltage">输出电压：<span></span> V</div>
+                        <div class="xy-out-voltage">输出电流：<span></span> A</div>
                     </div>
                 </div>
                 <div class="xy-module" id="xy-module-04">
@@ -57,19 +57,14 @@
                             <img src="${website_root}/static/imgs/charging-pile/icon-dl.png" alt="电量">
                         </div>
                         <div class="xy-img xy-img-3">
-                            <img src="${website_root}/static/imgs/charging-pile/icon-je.png" alt="金额">
-                        </div>
-                        <div class="xy-img xy-img-4">
                             <img src="${website_root}/static/imgs/charging-pile/icon-ygzdt.png" alt="有功总电度">
                         </div>
                         <div class="xy-label xy-label-1">充电时长（分钟）：</div>
                         <div class="xy-value xy-value-1">0.00</div>
                         <div class="xy-label xy-label-2">已充电量（kWh）：</div>
                         <div class="xy-value xy-value-2">0.00</div>
-                        <div class="xy-label xy-label-3">充电总价（元）：</div>
+                        <div class="xy-label xy-label-3">总电度（kWh）：</div>
                         <div class="xy-value xy-value-3">0.00</div>
-                        <div class="xy-label xy-label-4">总电度（kWh）：</div>
-                        <div class="xy-value xy-value-4">0.00</div>
                     </div>
                 </div>
                 <div id="xy-module-06">
