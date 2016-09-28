@@ -42,8 +42,19 @@ public class OperationController extends XyController
         sqlDaily.append("      AND A.user_id != '3333333333333333'");
         Record           recordDaily = Db.findFirst(sqlDaily.toString());
 
-        String              sqlAll    = "SELECT round(SUM(A.quantity/100),2) charge_quantity,COUNT(*) charge_amount FROM t_charging A WHERE  A.quantity/100 <200 AND A.del = 0 AND A.valid = 0";
-        Record              recordAll = Db.findFirst(sqlAll);
+        StringBuffer sqlAll = new StringBuffer();
+        sqlAll.append("       SELECT");
+        sqlAll.append("       	round(SUM(A.quantity / 100), 2) charge_quantity,");
+        sqlAll.append("       	COUNT(*) charge_amount");
+        sqlAll.append("       FROM");
+        sqlAll.append("       	t_charging A");
+        sqlAll.append("       WHERE");
+        sqlAll.append("       A.DEL = 0");
+        sqlAll.append("       AND A.quantity / 100 < 200");
+        sqlAll.append("       AND A.valid = 0");
+        sqlAll.append("       AND A.quantity !=0");
+        sqlAll.append("       AND A.user_id != '3333333333333333'");
+        Record              recordAll = Db.findFirst(sqlAll.toString());
         Map<String, Object> result    = new HashMap<>();
         if (null != recordDaily)
         {
