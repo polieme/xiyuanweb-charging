@@ -27,9 +27,20 @@ public class OperationController extends XyController
         Date             now         = new Date();
         SimpleDateFormat sdf         = new SimpleDateFormat("yyyy-MM-dd");
         String           nowStr      = sdf.format(now);
-        String           sqlDaily    = "select round(SUM(A.quantity/100),2) charge_quantity,COUNT(*) charge_amount from t_charging A WHERE A.create_time LIKE '"+nowStr+"%' AND A.DEL = 0 AND A.quantity/100<200 AND A.valid = 0";
-        String           condition   = "city_id='"+cityId+"' and station_type='0'";
-        Record           recordDaily = Db.findFirst(sqlDaily);
+        StringBuffer sqlDaily = new StringBuffer();
+        sqlDaily.append("      Select");
+        sqlDaily.append("      	round(SUM(A.quantity / 100), 2) charge_quantity,");
+        sqlDaily.append("      	COUNT(*) charge_amount");
+        sqlDaily.append("      FROM");
+        sqlDaily.append("      	t_charging A");
+        sqlDaily.append("      WHERE");
+        sqlDaily.append("      	A.start_time LIKE '"+nowStr+"%'");
+        sqlDaily.append("      AND A.DEL = 0");
+        sqlDaily.append("      AND A.quantity / 100 < 200");
+        sqlDaily.append("      AND A.valid = 0");
+        sqlDaily.append("      AND A.quantity !=0");
+        sqlDaily.append("      AND A.user_id != '3333333333333333'");
+        Record           recordDaily = Db.findFirst(sqlDaily.toString());
 
         String              sqlAll    = "SELECT round(SUM(A.quantity/100),2) charge_quantity,COUNT(*) charge_amount FROM t_charging A WHERE  A.quantity/100 <200 AND A.del = 0 AND A.valid = 0";
         Record              recordAll = Db.findFirst(sqlAll);
@@ -56,45 +67,52 @@ public class OperationController extends XyController
     public void get_statictis_charge()
     {
         String       type      = getPara("type");
-        String       sql       = "select stats_day,(charge_quantity/100) charge_quantity from t_charging_station_his where city_id='110000' and station_type='0' order by stats_day desc  limit 0,7";
-        //充电电量从his表中查询，由于充电次数需要区分扫码和刷卡，所以不再从his表中进行查询
-        //
-        String sqlForQuantity = "select stats_day,(charge_quantity/100) charge_quantity from " +
-                "t_charging_station_his where city_id='110000' and station_type='0' order by stats_day desc  limit 0,7";
-        //
-        //String sqlForStartTime = "";
         StringBuffer sqlForStartTime = new StringBuffer();
-        sqlForStartTime.append("      SELECT");
-        sqlForStartTime.append("      	LEFT (A.create_time, 10) stats_day,");
-        sqlForStartTime.append("      	SUM(");
-        sqlForStartTime.append("      		CASE");
-        sqlForStartTime.append("      		WHEN B.user_name IS NULL");
-        sqlForStartTime.append("      		AND quantity IS NOT NULL THEN");
-        sqlForStartTime.append("      			1");
-        sqlForStartTime.append("      		ELSE");
-        sqlForStartTime.append("      			0");
-        sqlForStartTime.append("      		END");
-        sqlForStartTime.append("      	) card_time,");
-        sqlForStartTime.append("      	SUM(");
-        sqlForStartTime.append("      		CASE");
-        sqlForStartTime.append("      		WHEN B.user_name IS NULL THEN");
-        sqlForStartTime.append("      			0");
-        sqlForStartTime.append("      		ELSE");
-        sqlForStartTime.append("      			1");
-        sqlForStartTime.append("      		END");
-        sqlForStartTime.append("      	) code_time");
-        sqlForStartTime.append("      FROM");
-        sqlForStartTime.append("      	t_charging A");
-        sqlForStartTime.append("      LEFT JOIN t_user_person B ON A.user_id = B.userid");
-        sqlForStartTime.append("      GROUP BY");
-        sqlForStartTime.append("      	LEFT (A.create_time, 10)");
-        sqlForStartTime.append("      ORDER BY");
-        sqlForStartTime.append("      	LEFT (A.create_time, 10) DESC");
-        sqlForStartTime.append("      LIMIT 1,");
-        sqlForStartTime.append("       7;");
+        sqlForStartTime.append("     SELECT");
+        sqlForStartTime.append("     	LEFT (A.start_time, 10) stats_day,");
+        sqlForStartTime.append("     	ROUND(SUM(A.QUANTITY/100),2) charge_quantity,");
+        sqlForStartTime.append("     	SUM(");
+        sqlForStartTime.append("     		CASE");
+        sqlForStartTime.append("     		WHEN B.user_name IS NULL");
+        sqlForStartTime.append("     		AND quantity IS NOT NULL THEN");
+        sqlForStartTime.append("     			1");
+        sqlForStartTime.append("     		ELSE");
+        sqlForStartTime.append("     			0");
+        sqlForStartTime.append("     		END");
+        sqlForStartTime.append("     	) card_time,");
+        sqlForStartTime.append("     	SUM(");
+        sqlForStartTime.append("     		CASE");
+        sqlForStartTime.append("     		WHEN B.user_name IS NULL THEN");
+        sqlForStartTime.append("     			0");
+        sqlForStartTime.append("     		ELSE");
+        sqlForStartTime.append("     			1");
+        sqlForStartTime.append("     		END");
+        sqlForStartTime.append("     	) code_time");
+        sqlForStartTime.append("     FROM");
+        sqlForStartTime.append("     	t_charging A");
+        sqlForStartTime.append("     LEFT JOIN t_user_person B ON A.user_id = B.userid");
+        sqlForStartTime.append("     WHERE");
+        sqlForStartTime.append("     	A.quantity / 100 < 200");
+        sqlForStartTime.append("     AND A.quantity != 0");
+        sqlForStartTime.append("     AND A.DEL = 0");
+        sqlForStartTime.append("     AND A.VALID = 0");
+        sqlForStartTime.append("     AND A.user_id != '3333333333333333'");
+        sqlForStartTime.append("     AND LEFT (A.start_time, 10) IN (");
+        sqlForStartTime.append("     	DATE_ADD(SUBSTR(NOW() FROM 1 FOR 10),INTERVAL -1 DAY),");
+        sqlForStartTime.append("     DATE_ADD(SUBSTR(NOW() FROM 1 FOR 10),INTERVAL -2 DAY),");
+        sqlForStartTime.append("     DATE_ADD(SUBSTR(NOW() FROM 1 FOR 10),INTERVAL -3 DAY),");
+        sqlForStartTime.append("     DATE_ADD(SUBSTR(NOW() FROM 1 FOR 10),INTERVAL -4 DAY),");
+        sqlForStartTime.append("     DATE_ADD(SUBSTR(NOW() FROM 1 FOR 10),INTERVAL -5 DAY),");
+        sqlForStartTime.append("     DATE_ADD(SUBSTR(NOW() FROM 1 FOR 10),INTERVAL -6 DAY),");
+        sqlForStartTime.append("     DATE_ADD(SUBSTR(NOW() FROM 1 FOR 10),INTERVAL -7 DAY)");
+        sqlForStartTime.append("     )");
+        sqlForStartTime.append("     GROUP BY");
+        sqlForStartTime.append("     	LEFT (A.start_time, 10)");
+        sqlForStartTime.append("     ORDER BY");
+        sqlForStartTime.append("     	LEFT (A.start_time, 10) DESC;");
         List<Record> list = null;
         if(("1").equals(type)){
-             list      = Db.find(sqlForQuantity);
+             list      = Db.find(sqlForStartTime.toString());
         }else if(("2").equals(type)){
              list      = Db.find(sqlForStartTime.toString());
         }
