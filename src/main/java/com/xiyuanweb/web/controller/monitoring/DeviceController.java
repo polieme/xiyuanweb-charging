@@ -5,7 +5,14 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.xiyuanweb.jfinal.controller.XyController;
 import com.xiyuanweb.jfinal.validator.annotation.RequestParams;
+import com.xiyuanweb.web.controller.Common;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +44,7 @@ public class DeviceController extends XyController
     })
     public void get_detail(){
         String id = getPara("id");
-
+        Map pileStatusMap = new HashMap();
         String sql = " select pile_name,pile_type,run_status from t_charging_pile" +
                 " where del = '0' and id = ?";
         String sqlRt     = " select current,voltage,connection_status,charge_energy from t_charging_pile_rt where pile_id=? ";
@@ -45,12 +52,34 @@ public class DeviceController extends XyController
                 "where pile_id = ? and del = '0' order by create_time";
         String sqlFault = "select t.fault_code,t.err_code,t.err_status,t.record_time from t_fault t " +
                 "where t.pile_id = ? and solve_status = '1'";
+
+        //获取充电桩的运行编码，从接口中获取充电桩的充电状态数据
+        String getPileCodeSql = "SELECT pile_code,pile_name,pile_type FROM t_charging_pile A WHERE A.id = ?";
+        Record pileCodeRd = Db.findFirst(getPileCodeSql,id);
+        String pileCode = pileCodeRd.getStr("pile_code");//充电桩运行编码
+        String pileName = pileCodeRd.getStr("pile_name");//充电桩名称
+        String pileType = pileCodeRd.getInt("pile_type")+"";//充电桩类型
+        String pileRslt = Common.getPileStatus(pileCode);
+        try {
+            JSONObject pileStatusObj = new JSONObject(pileRslt);
+            pileStatusMap.put("pile_name",pileName);//充电桩名称
+            pileStatusMap.put("pile_type",pileType);//充电桩类型
+            pileStatusMap.put("run_status",pileStatusObj.getJSONObject("result").getString("status"));//当前运行状态
+            pileStatusMap.put("current",pileStatusObj.getJSONObject("result").getString("current"));//当前电流
+            pileStatusMap.put("voltage",pileStatusObj.getJSONObject("result").getString("voltage"));//充电电压
+            pileStatusMap.put("chargingDuration",pileStatusObj.getJSONObject("result").getString("chargingDuration"));//当前充电时长
+            pileStatusMap.put("curElect",pileStatusObj.getJSONObject("result").getString("curElect"));//当前充电电量
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
         Record             pile = Db.findFirst(sql,id);
         Record             cdzt   = Db.findFirst(sqlRt,id);
         Record             cddd   = Db.findFirst(sqlCharge,id);
         Record             gzzt   = Db.findFirst(sqlFault,id);
         Map<String,Object> result = new HashMap<String,Object>();
-        result.put("pile",toMapResult(pile));
+        result.put("pile",pileStatusMap);
         result.put("charging",toMapResult(cdzt));
         result.put("charging_pay",toMapResult(cddd));
         result.put("charging_fault",toMapResult(gzzt));
