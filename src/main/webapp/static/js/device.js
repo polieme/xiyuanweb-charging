@@ -38,7 +38,7 @@ Xy.Module01.refresh = function () {
 
     var showRunningDays = function () {
         var begin = new Date();
-        begin.setFullYear(2016, 7, 15);
+        begin.setFullYear(2015, 11, 20);
         var now = new Date();
         $('#xy-module-01 .xy-days').html(parseInt((now.getTime() - begin.getTime()) / 1000 / 60 / 60 / 24));
     };
@@ -116,20 +116,43 @@ Xy.Module04.refresh = function () {
         // 1：空闲桩 ，2：只连接未充电，3：充电进行中, 4：GPRS通讯中断,5：检修中,6：预约，7：故障
         // 1: 忙碌, 2：空闲，3：故障，4：离线，5：连接，6：检修，7：预约
         // 索引返回的数据，值页面class序号
-        var mapper = {
-            '1': 2,
-            '2': 5,
-            '3': 1,
-            '4': 4,
-            '5': 6,
-            '6': 7,
-            '7': 3,
-        };
         if (data) {
-            for (var i = 0; i < data.length; i++) {
-                var seq = mapper[data[i].run_status];
-                $('#xy-module-04 .xy-count-' + seq).html(data[i].count);
+            //此处不进行动态赋值，由于涉及几百个桩的运行状态异常以及脏数据，
+            var busyCount = 0 ;//充电中
+            var freeCount = 0 ;//空闲
+            var wrongCount = 0 ;//故障
+            var offLineCount = 0 ;//离线
+            var connectCount  = 0 ;//连接未充电
+            var repairCount = 0 ;//检修
+            var orderCount = 0 ;//预约
+            for(var i = 0;i<data.length;i++){
+                if(data[i].run_status=="1"){
+                    freeCount = freeCount+data[i].count;
+                }else if(data[i].run_status=="2"){
+                    connectCount = connectCount +data[i].count;
+                }else if(data[i].run_status=="3"){
+                    busyCount = busyCount +data[i].count;
+                }else if(data[i].run_status=="4"){
+                    offLineCount = offLineCount +data[i].count;
+                }else if(data[i].run_status=="5"){
+                    repairCount = repairCount +data[i].count;
+                }else if(data[i].run_status=="6"){
+                    orderCount = orderCount +data[i].count;
+                }else if(data[i].run_status=="7"){
+                    wrongCount = wrongCount +data[i].count;
+                }else if(data[i].run_status=="8"){
+                    wrongCount = wrongCount +data[i].count;
+                }else if(data[i].run_status=="9"){
+                    wrongCount = wrongCount +data[i].count;
+                }
             }
+            $('#xy-module-04 .xy-count-1').html(busyCount);
+            $('#xy-module-04 .xy-count-2').html(freeCount);
+            $('#xy-module-04 .xy-count-3').html(wrongCount);
+            $('#xy-module-04 .xy-count-4').html(offLineCount);
+            $('#xy-module-04 .xy-count-5').html(connectCount);
+            $('#xy-module-04 .xy-count-6').html(repairCount);
+            $('#xy-module-04 .xy-count-7').html(orderCount);
         }
     })
 }

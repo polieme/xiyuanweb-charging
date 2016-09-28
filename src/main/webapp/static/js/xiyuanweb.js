@@ -32,7 +32,7 @@ Xy.requestApi = function (url, param, callback) {
         url: Xy.absPath(url),
         data: param || {},
         type: 'POST',
-        timeout: 10000,
+        timeout: 100000,
         success: function (resp) {
             if (resp.code == 0) {
                 if (callback) {
@@ -81,10 +81,3 @@ Xy.requestApiSync = function (url, param, callback) {
 
     });
 };
-// demo
-// $(function () {
-//     Xy.requestApi('/operation/get_charge', {}, function (data) {
-//         console.log(data.all_charge_amount)
-//         console.log(data.all_charge_quantity)
-//     })
-// });
