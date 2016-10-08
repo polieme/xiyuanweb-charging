@@ -175,7 +175,7 @@
                             </div>
                         </div>
                         <div class="xy-module" id="xy-module-07">
-                            <div class="xy-tip">提示：有<b>0</b>处设施发生错误请注意</div>
+                            <div class="xy-tip" style="display: none">提示：有<b>0</b>处设施发生错误请注意</div>
                             <div class="xy-status-group xy-status-group-1">
                                 <div class="xy-status-group-body">
                                     <div class="xy-label xy-label-2">轻微</div>
