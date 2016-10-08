@@ -35,7 +35,7 @@ public class StationController extends XyController
         String           nowStr      = sdf.format(now);
         String sql = "SELECT sum(quantity/100) quantity from t_charging A where A.quantity/100<200 and A.pile_id IN (select  id from t_charging_pile a where station_id = '"+stationId+"')";
 
-        String sqlPileCount = "SELECT count(*) count,run_status FROM t_charging_pile where station_id = '"+stationId+"' AND DEL=0 GROUP BY run_status";
+        String sqlPileCount = "SELECT count(*) count,run_status FROM t_charging_pile where station_id = '"+stationId+"' AND run_status not in('0','-1') AND DEL=0 GROUP BY run_status";
 
         String sqljlCount = " SELECT count(*) count,pile_type FROM t_charging_pile where station_id = '"+stationId+"' AND DEL = 0 GROUP BY pile_type";
 
