@@ -213,17 +213,26 @@ Xy.Module06.refresh = function () {
                 dcStationCount = 0, acStationCount = 0;
             var pilelist = data.pileStatus;
             for (var i = 0; i < pilelist.length; i++) {
-                var run_status = pilelist[i].run_status;
+                var run_status = pilelist[i].run_status
                 if (run_status == '1') {
                     leisureStationCount = pilelist[i].count || 0;
                 } else if (run_status == '3') {
-                    busyStationCount = pilelist[i].count || 0;
+                    busyStationCount = busyStationCount+pilelist[i].count || 0;
                 } else if (run_status == '7') {
-                    malfunctionStationCount = pilelist[i].count || 0;
+                    malfunctionStationCount = malfunctionStationCount+pilelist[i].count || 0;
                 } else if (run_status == '4') {
-                    offLineStationCount = pilelist[i].count || 0;
-                }
-            }
+                    offLineStationCount = offLineStationCount+pilelist[i].count || 0;
+                } else if (run_status == "8"){
+                    busyStationCount = busyStationCount+pilelist[i].count || 0;
+                } else if (run_status == "9"){
+                    offLineStationCount = offLineStationCount + pilelist[i].count || 0;
+                } else if (run_status == "2"){
+                    busyStationCount = busyStationCount + pilelist[i].count || 0;
+                } else if (run_status == "5"){
+                    malfunctionStationCount = malfunctionStationCount + pilelist[i].count || 0;
+                } else if (run_status == "6"){
+                    busyStationCount = busyStationCount + pilelist[i].count || 0;
+                }}
             var typelist = data.jlstatus;
             for (var i = 0; i < typelist.length; i++) {
                 var pile_type = typelist[i].pile_type
@@ -248,7 +257,22 @@ Xy.Module06.refresh = function () {
             });
         }
     })
-
+    /**
+     * 1：空闲桩 ，2：只连接未充电，3：充电进行中, 4：GPRS通讯中断,5：检修中,6：预约，7：故障 8：自动充满，9.长期离线
+     */
+    /**
+     * 默认站点数据
+     * @type {{
+     * todayQuantity: number,               // 当日充电量
+     * totalQuantity: number,               // 累计充电量
+     * dcStationCount: number,              // 直流桩
+     * acStationCount: number,              // 交流桩
+     * leisureStationCount: number,         // 空闲
+     * busyStationCount: number,            // 忙碌
+     * malfunctionStationCount: number,     // 故障
+     * offLineStationCount: number          // 离线
+     * }}
+     */
     Xy.requestApi('/station/get_station_charge', {id: '1014607105341453524'}, function (data) {
         if (data) {
             // 当日充电电量
@@ -261,11 +285,21 @@ Xy.Module06.refresh = function () {
                 if (run_status == '1') {
                     leisureStationCount = pilelist[i].count || 0;
                 } else if (run_status == '3') {
-                    busyStationCount = pilelist[i].count || 0;
+                    busyStationCount = busyStationCount+pilelist[i].count || 0;
                 } else if (run_status == '7') {
-                    malfunctionStationCount = pilelist[i].count || 0;
+                    malfunctionStationCount = malfunctionStationCount+pilelist[i].count || 0;
                 } else if (run_status == '4') {
-                    offLineStationCount = pilelist[i].count || 0;
+                    offLineStationCount = offLineStationCount+pilelist[i].count || 0;
+                } else if (run_status == "8"){
+                    busyStationCount = busyStationCount+pilelist[i].count || 0;
+                } else if (run_status == "9"){
+                    offLineStationCount = offLineStationCount + pilelist[i].count || 0;
+                } else if (run_status == "2"){
+                    busyStationCount = busyStationCount + pilelist[i].count || 0;
+                } else if (run_status == "5"){
+                    malfunctionStationCount = malfunctionStationCount + pilelist[i].count || 0;
+                } else if (run_status == "6"){
+                    busyStationCount = busyStationCount + pilelist[i].count || 0;
                 }
             }
             var typelist = data.jlstatus;
