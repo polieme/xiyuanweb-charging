@@ -231,7 +231,7 @@ Xy.Module06.refresh = function () {
                 } else if (run_status == "5"){
                     malfunctionStationCount = malfunctionStationCount + pilelist[i].count || 0;
                 } else if (run_status == "6"){
-                    busyStationCount = busyStationCount + pilelist[i].count || 0;
+                    leisureStationCount = leisureStationCount + pilelist[i].count || 0;
                 }}
             var typelist = data.jlstatus;
             for (var i = 0; i < typelist.length; i++) {
@@ -299,7 +299,7 @@ Xy.Module06.refresh = function () {
                 } else if (run_status == "5"){
                     malfunctionStationCount = malfunctionStationCount + pilelist[i].count || 0;
                 } else if (run_status == "6"){
-                    busyStationCount = busyStationCount + pilelist[i].count || 0;
+                    leisureStationCount = leisureStationCount + pilelist[i].count || 0;
                 }
             }
             var typelist = data.jlstatus;
