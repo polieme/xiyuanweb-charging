@@ -204,7 +204,7 @@ public class OperationController extends XyController
         SimpleDateFormat sdf         = new SimpleDateFormat("yyyy-MM-dd");
         String           nowStr      = sdf.format(now);
         String sqlFault = "select s.pile_name,t.fault_code,t.err_code,t.err_status,t.record_time from t_fault t,t_charging_pile s "
-                + "where t.pile_id = s.id and solve_status = '1' and s.del='0' and s.city_id='"+cityId+"' and solve_status='1' and t.record_time like '"+nowStr+"%'";
+                + "where t.pile_id = s.id and solve_status = '1' and s.del='0' and s.city_id='"+cityId+"' and solve_status='1' and t.record_time like '"+nowStr+"%' ORDER BY RECORD_TIME DESC";
         List<Record> faultList = Db.find(sqlFault);
         List<Map<String,Object>> resultlist = toListMap(faultList);
         super.respJsonObject(resultlist);
