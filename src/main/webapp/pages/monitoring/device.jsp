@@ -71,6 +71,7 @@
                     <div id="xy-row-2-left">
                         <div class="xy-title">直流充电桩</div>
                         <div class="xy-sum">合计：1933&nbsp;台</div>
+                        <div class="xy-more"><a href="pile_info.jsp?stationId=<%=stationId%>&type=1">更多</a></div>
                         <div class="xy-sub-module xy-sub-module-1" style="display: none">
                             <div class="xy-sub-module-content">
                                 <div class="xy-sub-module-title">直流电桩001号</div>
@@ -203,6 +204,7 @@
                     <div id="xy-row-2-right">
                         <div class="xy-title">交流充电桩</div>
                         <div class="xy-sum">合计：3763&nbsp;台</div>
+                        <div class="xy-more"><a href="pile_info.jsp?stationId=<%=stationId%>&type=2">更多</a></div>
                         <div class="xy-sub-module xy-sub-module-1" style="display: none">
                             <div class="xy-sub-module-content">
                                 <div class="xy-sub-module-title">交流电桩001号</div>

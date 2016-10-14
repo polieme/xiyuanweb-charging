@@ -129,8 +129,6 @@ public class StationController extends XyController
             sql.append(" AND station_id = '" + stationId + "' ");
         }
         sql.append(" AND station_id!=''");
-        sql.append(" LIMIT 0, ");
-        sql.append("  4 ");
         List<Record> list =  Db.find(sql.toString(),type);
         for(Record record:list){
             String id = record.getStr("id");
@@ -162,6 +160,7 @@ public class StationController extends XyController
                         dy = a.getJSONObject("result").getString("voltage");//电压
                         dl = a.getJSONObject("result").getString("current");//电流
                         soc = a.getJSONObject("result").getString("soc");//SOC
+                        statusStr = a.getJSONObject("result").getString("connectStatus");//充电桩的连接状态
                     }
                 }
 

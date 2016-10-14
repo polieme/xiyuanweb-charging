@@ -183,7 +183,6 @@ Xy.Module05.refresh = function () {
         Xy.requestApi('/station/get_alternating_direct', {type: type,stationId:stationId}, function (datas) {
             var count = datas.length > 4 ? 4 : datas.length;
             for (var i = 0; i < count; i++) {
-                debugger;
                 var $subModule = $('.xy-sub-module-' + (1+i), $module);
                 $subModule[0].style.display="";//如果充电桩少于四个的时候，可以正常显示对应数量的充电桩
                 var data = datas[i];
