@@ -24,7 +24,6 @@
             <div class="xy-title">直流充电桩</div>
             <div class="xy-sum">合计：3763&nbsp;台</div>
             <div id="xy-row-2-left">
-
             </div>
         </div>
     </div>

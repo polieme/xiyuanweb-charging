@@ -477,6 +477,14 @@ var initJzlCount = function(){
         if(jzLObj){
             jzLObj[0].innerHTML = "合计："+data[0].zlCount+"&nbsp;台";
             jzLObj[1].innerHTML = "合计："+data[0].jlCount+"&nbsp;台";
+            //判断如果充电桩的数量少于5台的时候不显示更多按钮
+            debugger;
+            if(data[0].zlCount <5 && $("#xy-row-2-left .xy-more")){
+                $("#xy-row-2-left .xy-more")[0].innerHTML = "";
+            }
+            if(data[0].jlCount <5 && $("#xy-row-2-right .xy-more")){
+                $("#xy-row-2-right .xy-more")[0].innerHTML = "";
+            }
         }
 
     })
