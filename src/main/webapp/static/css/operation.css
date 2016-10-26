@@ -543,12 +543,13 @@
 
 #xy-module-06 .xy-electric-quantity-group .xy-value {
     width: 557px;
-    height: 32px;
-    line-height: 32px;
+    height: 52px;
+    line-height: 52px;
     color: #ffffff;
     background-color: #2cbd2f;
     padding-left: 13px;
     float: left;
+    font-size: 42px;
 }
 
 #xy-module-06 .xy-electric-quantity-group .xy-unit {
