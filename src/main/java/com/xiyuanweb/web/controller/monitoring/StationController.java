@@ -384,4 +384,111 @@ public class StationController extends XyController
         List<Record> list = Db.find(qryJzlCountSql.toString());
         super.respJsonObject(toListMap(list));
     }
+
+    /*
+    *查询充电站列表
+    * @param initCount:第几页
+    * @date 2016-11-2
+    * @author zhangpeng
+    * */
+    @RequestParams({
+            "*String:initCount"
+    })
+    public void getStationList(){
+        int initCount = Integer.parseInt(getPara("initCount"));
+        String sql = "SELECT id,station_name,cover_crop_img FROM t_charging_station WHERE del = 0 AND id IN (SELECT station_id FROM t_charging_pile) ORDER BY(direct_num+alter_num) LIMIT "+(initCount-1)*16+",16";
+        List<Record> list = Db.find(sql);
+        super.respJsonObject(toListMap(list));
+    }
+
+    /**
+     * 根据充电站的ID获取充电站的数据（交直流充电桩数量、当日充电电量、累计充电电量、空闲、忙碌、故障、离线数量）
+     */
+    @RequestParams({
+            "*String:stationId"
+    })
+    public void getStationInfo(){
+        String stationId =getPara("stationId");
+        //查询交直流桩的数量
+        String qryJZlPileCountSql = "SELECT (SUM(pile_type)-COUNT(*))JL_COUNT,(2*COUNT(*)-SUM(pile_type))ZL_COUNT FROM t_charging_pile WHERE station_id = '"+stationId+"' AND DEL = 0";
+        //查询当日充电站充电电量
+        String todayChargeQuantitySql = "SELECT SUM(C.quantity)/100 TODAY_QUANTITY FROM t_charging_pile P LEFT JOIN t_charging C ON P.id = C.pile_id AND C.del = 0 AND C.valid = 0 AND DATE(C.create_time) = DATE(NOW()) WHERE P.del = 0 AND P.station_id = '"+stationId+"'";
+        //查询充电站所有充电电量
+        String totalChargeQuantitySql = "SELECT SUM(C.quantity)/100 TOTAL_QUANTITY FROM t_charging_pile P LEFT JOIN t_charging C ON P.id = C.pile_id AND C.del = 0 AND C.valid = 0 WHERE P.del = 0 AND P.station_id = '"+stationId+"'";
+        //查询充电桩的状态
+        StringBuffer qryPileStatusSql = new StringBuffer();
+        //空闲充电桩数量
+        qryPileStatusSql.append(" SELECT ");
+        qryPileStatusSql.append(" 	'FREE_COUNT' PILE_STATUS,COUNT(1) STATUS_COUNT ");
+        qryPileStatusSql.append(" FROM ");
+        qryPileStatusSql.append(" 	t_charging_pile A ");
+        qryPileStatusSql.append(" WHERE ");
+        qryPileStatusSql.append(" 	A.station_id = '"+stationId+"' ");
+        qryPileStatusSql.append(" 	AND A.run_status = 1 ");
+        qryPileStatusSql.append(" UNION ALL ");
+        //忙碌数量
+        qryPileStatusSql.append(" SELECT ");
+        qryPileStatusSql.append(" 	'BUSY_COUNT' PILE_STATUS,COUNT(1) STATUS_COUNT ");
+        qryPileStatusSql.append(" FROM ");
+        qryPileStatusSql.append(" 	t_charging_pile A ");
+        qryPileStatusSql.append(" WHERE ");
+        qryPileStatusSql.append(" 	A.station_id = '"+stationId+"' ");
+        qryPileStatusSql.append(" 	AND A.run_status IN (2,3,6,8) ");
+        qryPileStatusSql.append(" UNION ALL ");
+        //离线数量
+        qryPileStatusSql.append(" SELECT ");
+        qryPileStatusSql.append(" 	'OFF_LINE' PILE_STATUS,COUNT(1) STATUS_COUNT ");
+        qryPileStatusSql.append(" FROM ");
+        qryPileStatusSql.append(" 	t_charging_pile A ");
+        qryPileStatusSql.append(" WHERE ");
+        qryPileStatusSql.append(" 	A.station_id = '"+stationId+"' ");
+        qryPileStatusSql.append(" 	AND A.run_status IN (0,4) ");
+        qryPileStatusSql.append(" UNION ALL ");
+        //故障数量
+        qryPileStatusSql.append(" SELECT ");
+        qryPileStatusSql.append(" 	'FAULT' PILE_STATUS,COUNT(1) STATUS_COUNT ");
+        qryPileStatusSql.append(" FROM ");
+        qryPileStatusSql.append(" 	t_charging_pile A ");
+        qryPileStatusSql.append(" WHERE ");
+        qryPileStatusSql.append(" 	A.station_id = '"+stationId+"' ");
+        qryPileStatusSql.append(" 	AND A.run_status IN (5,7) ");
+
+        Map<String,Object> resultMap = new HashMap();
+        //查询交直流桩的数量
+        Record jzlPileCountRec = Db.findFirst(qryJZlPileCountSql);
+        if(jzlPileCountRec!=null){
+            resultMap.put("JL_COUNT",jzlPileCountRec.getBigDecimal("JL_COUNT")==null?0:jzlPileCountRec.getBigDecimal("JL_COUNT"));
+            resultMap.put("ZL_COUNT",jzlPileCountRec.getBigDecimal("ZL_COUNT")==null?0:jzlPileCountRec.getBigDecimal("ZL_COUNT"));
+        }
+        //查询当日充电站充电电量
+        Record todayChargeQuantityRec = Db.findFirst(todayChargeQuantitySql);
+        if(todayChargeQuantityRec!=null){
+            resultMap.put("TODAY_QUANTITY",todayChargeQuantityRec.getBigDecimal("TODAY_QUANTITY")==null?0:todayChargeQuantityRec.getBigDecimal("TODAY_QUANTITY"));
+        }
+        //查询充电站总充电电量
+        Record totalChargeQuantityRec = Db.findFirst(totalChargeQuantitySql);
+        if(totalChargeQuantityRec!=null){
+            resultMap.put("TOTAL_QUANTITY",totalChargeQuantityRec.getBigDecimal("TOTAL_QUANTITY")==null?0:totalChargeQuantityRec.getBigDecimal("TOTAL_QUANTITY"));
+        }
+        //查询充电站中所有充电桩的充电状态
+        List<Record> qryPileStatusLst = Db.find(qryPileStatusSql.toString());
+        if(qryPileStatusLst!=null && qryPileStatusLst.size()>0){
+            resultMap.put("FREE_COUNT",qryPileStatusLst.get(0).get("STATUS_COUNT"));
+            resultMap.put("BUSY_COUNT",qryPileStatusLst.get(1).get("STATUS_COUNT"));
+            resultMap.put("OFF_LINE",qryPileStatusLst.get(2).get("STATUS_COUNT"));
+            resultMap.put("FAULT",qryPileStatusLst.get(3).get("STATUS_COUNT"));
+        }
+        super.respJsonObject(resultMap);
+    }
+
+    /*
+    *查询充电站数量
+    * @date 2016-11-2
+    * @author zhangpeng
+    * */
+    public void getStationCount() {
+        String sql = "SELECT COUNT(*) STATION_COUNT FROM t_charging_station WHERE del = 0";
+        List<Record> list = Db.find(sql);
+        super.respJsonObject(toListMap(list));
+    }
 }

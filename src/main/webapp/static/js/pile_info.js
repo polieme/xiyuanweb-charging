@@ -1,6 +1,5 @@
 
 function initPileGrid(stationId,type){
-    debugger;
     var dataArg;
     //获取充电站下面充电桩的状态
     Xy.requestApiSync('/station/get_alternating_direct', {type: type,stationId:stationId}, function (datas) {
