@@ -82,7 +82,7 @@
                         <div class="xy-module" id="xy-module-06">
                             <div class="xy-title-left">丰台区腾势张仪村优易充小站<span>&nbsp;</span><a id = 'forlink' href="device.jsp?stationId=1014507799978950178">查看</a></div>
                             <div class="xy-title-right">忘归酒店东方远洋店优易充小站<span>&nbsp;</span><a id = 'forlink' href="device.jsp?stationId=1014607105341453524">查看</a></div>
-                            <div class="xy-btn-more"><a href="${website_root}/pages/monitoring/station_list.jsp"><img src="${website_root}/static/imgs/operation/model-06/btn-more.png" alt="更多"></a></div>
+                            <div class="xy-btn-more"><a target="_blank" href="${website_root}/pages/monitoring/station_list.jsp"><img src="${website_root}/static/imgs/operation/model-06/btn-more.png" alt="更多"></a></div>
 
                             <div class="xy-status-group xy-status-group-1">
                                 <div class="xy-label">直流桩</div>

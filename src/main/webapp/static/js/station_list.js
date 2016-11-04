@@ -83,25 +83,29 @@ function addStationDiv(stationListDiv,dataArg,stationInfoArgs){
         "<div class='xy-clear'></div>" +
         "</div>" +
         "<div class='xy-status-group xy-status-group-5'>" +
-        "<div class='xy-label'>空闲</div>" +
-        "<div class='xy-value xy-value-5'>"+stationInfoArgs.FREE_COUNT+"</div>" +
-        "<div class='xy-unit'>台</div>" +
+        "<div class='xy-pilestatus-ico' style='background-image:url(/xiyuanweb-charging/static/css/imgs/station-list/free_pile_count.png)'></div>"+
+        "<div class='xy-pile-label'>空闲</div>" +
+        "<div class='xy-pile-value'>"+stationInfoArgs.FREE_COUNT+"</div>" +
+        "<div class='xy-pile-unit'>台</div>" +
         "</div>" +
         "<div class='xy-status-group xy-status-group-6'>" +
-        "<div class='xy-label'>忙碌</div>" +
-        "<div class='xy-value xy-value-6'>"+stationInfoArgs.BUSY_COUNT+"</div>" +
-        "<div class='xy-unit'>台</div>" +
+        "<div class='xy-pilestatus-ico' style='background-image:url(/xiyuanweb-charging/static/css/imgs/station-list/busy_pile_count.png)'></div>"+
+        "<div class='xy-pile-label'>忙碌</div>" +
+        "<div class='xy-pile-value'>"+stationInfoArgs.BUSY_COUNT+"</div>" +
+        "<div class='xy-pile-unit'>台</div>" +
         "</div>" +
         "<div class='xy-status-group xy-status-group-7'>" +
-        "<div class='xy-label'>故障</div>" +
-        "<div class='xy-value xy-value-7'  " +
+        "<div class='xy-pilestatus-ico' style='background-image:url(/xiyuanweb-charging/static/css/imgs/station-list/fault_pile_count.png)'></div>"+
+        "<div class='xy-pile-label'>故障</div>" +
+        "<div class='xy-pile-value'  " +
         ">"+stationInfoArgs.FAULT+"</div>" +
-        "<div class='xy-unit'>台</div>" +
+        "<div class='xy-pile-unit'>台</div>" +
         "</div>" +
         "<div class='xy-status-group xy-status-group-8'>" +
-        "<div class='xy-label'>离线</div>" +
-        "<div class='xy-value xy-value-8'>"+stationInfoArgs.OFF_LINE+"</div>" +
-        "<div class='xy-unit'>台</div>" +
+        "<div class='xy-pilestatus-ico' style='background-image:url(/xiyuanweb-charging/static/css/imgs/station-list/offline_pile_count.png)'></div>"+
+        "<div class='xy-pile-label'>离线</div>" +
+        "<div class='xy-pile-value'>"+stationInfoArgs.OFF_LINE+"</div>" +
+        "<div class='xy-pile-unit'>台</div>" +
         "</div>" +
         "</div>" +
         "</div>")

@@ -611,10 +611,26 @@
 }
 
 #xy-module-01 .xy-status-group .xy-value {
-    width: 120px;
+     width: 120px;
+     float: left;
+     text-align: right;
+     padding-right: 10px;
+ }
+
+#xy-module-01 .xy-status-group .xy-pile-value {
+    width: 40px;
     float: left;
     text-align: right;
     padding-right: 10px;
+}
+
+
+#xy-module-01 .xy-status-group .xy-pilestatus-ico {
+    width: 41px;
+    height: 41px;
+    float: left;
+    margin-left:50px;
+    background-repeat: no-repeat;
 }
 
 #xy-module-01 .xy-status-group .xy-value-1{
@@ -685,6 +701,12 @@
     padding-left: 29px;
     padding-top: 15px;
 }
+
+#xy-module-01 .xy-pile-unit {
+    width: 26px;
+    float: left;
+    padding-left: 25px;
+}
 #xy-module-01 .xy-status-group-5 {
     left: 958px;
     top: 532px;
@@ -723,6 +745,13 @@
 
 #xy-module-01 .xy-status-group .xy-label {
     width: 134px;
+    text-align: right;
+    padding-right: 20px;
+    float: left;
+}
+
+#xy-module-01 .xy-status-group .xy-pile-label {
+    width: 120px;
     text-align: right;
     padding-right: 20px;
     float: left;
