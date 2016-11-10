@@ -19,7 +19,8 @@
     <%@include file="/pages/inc/page_header.jsp" %>
     <div id="xy-body">
         <div id="xy-row-2">
-            <div class="xy-title">充电站</div>
+            <div id="xy-title-1" class="xy-title-1" onclick="chgTitleCorlor(1);initStationList(1)">充电站</div>
+            <div id="xy-title-2" class="xy-title-2" onclick="chgTitleCorlor(2);initStationList(2)">优易充小站</div>
             <div class="xy-sum">合计：0&nbsp;座</div>
             <div id="xy-row-2-left">
 
@@ -27,7 +28,8 @@
         </div>
     </div>
 </div>
-
+<div class="hiddenDiv" onclick="hiddenDiv()"></div>
+<div class="camera-pic-div" onclick="hiddenDiv()"></div>
 <script type="text/javascript" src="${website_root}/static/js/jquery.min.js"></script>
 <script type="text/javascript" src="${website_root}/static/amcharts/amcharts.js"></script>
 <script type="text/javascript" src="${website_root}/static/amcharts/serial.js"></script>

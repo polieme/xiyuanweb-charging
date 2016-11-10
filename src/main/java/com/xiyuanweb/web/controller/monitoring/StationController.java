@@ -10,7 +10,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import org.json.*;
+
+import com.xiyuanweb.web.controller.Common;
+import org.json.JSONObject;
+
 /**
  * 第二个界面
  * Created by chenxl on 2016/9/3.
@@ -392,12 +395,39 @@ public class StationController extends XyController
     * @author zhangpeng
     * */
     @RequestParams({
-            "*String:initCount"
+            "*String:initCount",
+            "*String:stationType"
     })
     public void getStationList(){
         int initCount = Integer.parseInt(getPara("initCount"));
-        String sql = "SELECT id,station_name,cover_crop_img FROM t_charging_station WHERE del = 0 AND id IN (SELECT station_id FROM t_charging_pile) ORDER BY(direct_num+alter_num) LIMIT "+(initCount-1)*16+",16";
-        List<Record> list = Db.find(sql);
+        String stationType = getPara("stationType");//获取充电站类型
+        StringBuffer sql = new StringBuffer();
+        sql.append(" SELECT ");
+        sql.append(" 	A.id, ");
+        sql.append(" 	station_name, ");
+        sql.append(" 	cover_crop_img, ");
+        sql.append(" 	camera_serial ");
+        sql.append(" FROM ");
+        sql.append(" 	t_charging_station A ");
+        sql.append(" LEFT JOIN t_pile_camera B ON B.station_id = A.id ");
+        sql.append(" WHERE ");
+        sql.append(" 	del = 0 ");
+        sql.append(" AND A.id IN ( ");
+        sql.append(" 	SELECT ");
+        sql.append(" 		station_id ");
+        sql.append(" 	FROM ");
+        sql.append(" 		t_charging_pile ");
+        sql.append(" ) ");
+
+        //如果选择的是优易充小站
+        if(stationType!=null && stationType.equals("2")){
+            sql.append(" AND A.type = 4");
+        }
+
+        sql.append(" ORDER BY ");
+        sql.append(" 	(direct_num + alter_num) ");/*根据系统中录入的交直流桩进行排序*/
+        sql.append(" LIMIT "+(initCount-1)*16+",16");
+        List<Record> list = Db.find(sql.toString());
         super.respJsonObject(toListMap(list));
     }
 
@@ -490,5 +520,47 @@ public class StationController extends XyController
         String sql = "SELECT COUNT(*) STATION_COUNT FROM t_charging_station WHERE del = 0";
         List<Record> list = Db.find(sql);
         super.respJsonObject(toListMap(list));
+    }
+
+    //获取充电站摄像头的图片信息
+    @RequestParams({
+            "*String:cameraSerial"
+    })
+    public void getStationCameraPic(){
+
+        String accessTokenStr = "";
+        String imgUrl = "";
+        JSONObject imgUrlJson = null;
+        String cameraSerial = getPara("cameraSerial");//摄像头的序列号
+        HashMap<String,String> paramMap = new HashMap<>();
+        paramMap.put("appKey","b11f6c3ce9ca4e8e9b9665ed5456f734");
+        paramMap.put("appSecret","ba44857bdc50145adeae21b3c7ccb0fe");
+        //获取accessToken
+        String accessToken = Common.postAction("https://open.ys7.com/api/lapp/token/get",paramMap);
+        try{
+            JSONObject accessTokenJson = new JSONObject(accessToken);
+            accessTokenStr = accessTokenJson.getJSONObject("data").getString("accessToken");
+        }catch (Exception e){
+            System.out.print("解析json出现异常");
+            e.printStackTrace();
+        }
+
+
+        //根据accessToken获取照片路径
+        HashMap<String,String> imgParamMap = new HashMap<String,String>();
+        imgParamMap.put("accessToken",accessTokenStr);
+        imgParamMap.put("deviceSerial",cameraSerial);
+        imgParamMap.put("channelNo","1");
+        String imgUrlJsonStr = Common.postAction("https://open.ys7.com/api/lapp/device/capture",imgParamMap);
+
+        try{
+            imgUrlJsonStr = new String(imgUrlJsonStr.getBytes("GBK"),"UTF-8");
+            imgUrlJson = new JSONObject(imgUrlJsonStr);
+        }catch (Exception e){
+            System.out.println("解析Json出现异常");
+            e.printStackTrace();
+        }
+        System.out.println(imgUrlJsonStr);
+        super.respJsonObject(imgUrlJsonStr);
     }
 }
