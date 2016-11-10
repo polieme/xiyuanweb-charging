@@ -1,30 +1,36 @@
 //定义全局常量，保证滚动到最下的时候只提醒一次
 var isInit = 0;
-var initCount = 1;
+var initCount = 1;//初始化了多少次
 var letfPx = 0;
 var topPx = 0;
-var i=1;
+var i=1;//加载的第几个
+var showWhicStation = 1;
 //加载充电站数量
 initStationCount();
 //加载充电站列表
-initStationList();
+initStationList(1);
 function initStationCount(){
     Xy.requestApiSync('/station/getStationCount', {}, function (data) {
         $("#xy-body #xy-row-2 .xy-sum")[0].innerHTML = "合计："+data[0].STATION_COUNT+"&nbsp;座";
     })
 }
-function initStationList(){
+
+//stationType 显示哪些充电站  1：所有充电站  2：优易充小站
+function initStationList(stationType){
+    debugger;
     isInit = 1;
+    showWhicStation = stationType;
     var stationListDiv = $("#xy-row-2-left");//充电站列表外层DIV
     var stationInfoArgs;
     //获取充电站列表
     var dataArg;
-    Xy.requestApiSync('/station/getStationList', {initCount:initCount}, function (datas) {
+    Xy.requestApiSync('/station/getStationList', {initCount:initCount,stationType:stationType}, function (datas) {
         dataArg = datas;
     })
 
-    //循环遍历展示对应的充电站
-    for(i;i<dataArg.length*initCount+1;i++) {
+    //循环遍历展示对应的充电站（该地方存在一个问题，当加载的数量不是16个的时候）
+    var iMax = dataArg.length==16?(16*initCount+1):(16*initCount+1-(16-dataArg.length));
+    for(i;i<iMax;i++) {
         //通过循环进行列表排序，6个换行
         if (i != 1 && i % 4 == 1) {
             letfPx = 0;
@@ -40,10 +46,12 @@ function initStationList(){
         addStationDiv(stationListDiv,dataArg,stationInfoArgs)
     }
     isInit = 0;
-    //滚动条自动往下滚
+
+    //滚动条自动往下滚（第一次加载的时候不下滑）
     if(initCount!=1){
         autoScroll();
     }
+    ++initCount;
 }
 
 //加载DIV
@@ -54,10 +62,14 @@ function addStationDiv(stationListDiv,dataArg,stationInfoArgs){
     var totalQuantity = stationInfoArgs.TOTAL_QUANTITY*1;//所有充电电量
     var totalQuantityLen = (totalQuantity>1000?1000:totalQuantity)/1000*557;
     totalQuantityLen = totalQuantityLen<150?150:totalQuantityLen;
+    var isShowCamera = dataArg[i-(initCount-1)*16-1].camera_serial==undefined ?"none":"";//摄像头PIC是否显示
+
     stationListDiv.append("<div style='position: absolute;left:"+letfPx+"px;top:"+topPx+"px'> <div id='xy-module-01' style='background: url(/xiyuanweb-charging/static/css/imgs/station-list/station_list_bg.png) no-repeat left top !important; margin-top: 130px;height: 714px;'>" +
         "<div class='xy-title-left' style='top:160px;left: 20px;'>"+dataArg[i-(initCount-1)*16-1].station_name+"<span>&nbsp;</span><a id = 'forlink' target='_blank' href='device.jsp?stationId="+dataArg[i-(initCount-1)*16-1].id+"'>查看</a></div>" +
 
         "<div class='xy-station-pic' style='background-image: url(http://yyc.renrenchongdian.com/charge/"+dataArg[i-(initCount-1)*16-1].cover_crop_img+");'></div>"+
+
+        "<div class='xy-camera-pic' style='display: "+isShowCamera+"' onclick='showCameraPci("+dataArg[i-(initCount-1)*16-1].camera_serial+")'></div>"+
 
         "<div class='xy-status-group xy-status-group-1'> " +
         "<div class='xy-label'>直流桩</div>" +
@@ -116,14 +128,63 @@ $(window).scroll(function(){
     var scrollTop = $(this).scrollTop();
     var scrollHeight = $(document).height();
     var windowHeight = $(this).height();
-    if(scrollTop + windowHeight >= scrollHeight){
+    if(scrollTop + windowHeight >= scrollHeight-2){
         if(isInit == 0){
-            initStationList(++initCount);
+            initStationList(showWhicStation);
         }
     }
 });
 
 //滚动条自动下滚
 function autoScroll(){
-    $("html,body").animate({scrollTop:($(document).height()-$(this).height()-550)},2000);
+    var scrollHeight = $(document).height();//整个页面的高度
+    var windowHeight = $(this).height();//能看到的浏览器的高度
+    $("html,body").animate({scrollTop:($(document).height()-$(this).height()-200)},2000);
+}
+
+//打开摄像头获取图片
+function showCameraPci(cameraSerial){
+    Xy.requestApiSync('/station/getStationCameraPic', {cameraSerial:cameraSerial}, function (data) {
+        data = eval('('+data+')');
+        debugger;
+        if(data.code!=200){
+            alert(data.msg);
+        }else{
+            //创建DIV显示对应的Picrute
+            $(".hiddenDiv")[0].style.display = "block";
+            $(".camera-pic-div")[0].style.display = "block";
+            $(".camera-pic-div")[0].style.backgroundImage = "url("+data.data.picUrl+")";
+            $(".camera-pic-div")[0].style.backgroundRepeat = "no-repeat";
+
+            //alert(data.data.picUrl);
+        }
+
+    })
+}
+
+//隐藏div
+function hiddenDiv(){
+    $(".hiddenDiv")[0].style.display = "none";
+    $(".camera-pic-div")[0].style.display = "none";
+}
+
+//更改（充电站/优易充小站的）背景颜色，并清除DIV中的数据
+function chgTitleCorlor(showWhicStation){
+
+    //首先清掉所有标签的背景颜色
+    var objs = $("#xy-row-2 div[id^='xy-title']");
+    if(objs!=null){
+        for( var y=0;y<objs.length;y++){
+            objs[y].style.backgroundColor = "transparent";
+        }
+    }
+    //设置选中标签颜色
+    $("#xy-row-2 #xy-title-"+showWhicStation+"")[0].style.backgroundColor = "#1C3550";
+    //清掉div中的内容
+    $("#xy-row-2-left").empty();
+    //重置全局变量
+    initCount = 1;
+    letfPx = 0;
+    topPx = 0;
+    i=1;
 }
