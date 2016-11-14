@@ -5,19 +5,19 @@ var letfPx = 0;
 var topPx = 0;
 var i=1;//加载的第几个
 var showWhicStation = 1;
-//加载充电站数量
-initStationCount();
+
 //加载充电站列表
 initStationList(1);
-function initStationCount(){
-    Xy.requestApiSync('/station/getStationCount', {}, function (data) {
+function initStationCount(stationType){
+    Xy.requestApiSync('/station/getStationCount', {stationType:stationType}, function (data) {
         $("#xy-body #xy-row-2 .xy-sum")[0].innerHTML = "合计："+data[0].STATION_COUNT+"&nbsp;座";
     })
 }
 
 //stationType 显示哪些充电站  1：所有充电站  2：优易充小站
 function initStationList(stationType){
-    debugger;
+    //加载充电站数量
+    initStationCount(stationType);
     isInit = 1;
     showWhicStation = stationType;
     var stationListDiv = $("#xy-row-2-left");//充电站列表外层DIV
