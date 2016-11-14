@@ -516,9 +516,26 @@ public class StationController extends XyController
     * @date 2016-11-2
     * @author zhangpeng
     * */
+    @RequestParams({
+            "*String:stationType"
+    })
     public void getStationCount() {
-        String sql = "SELECT COUNT(*) STATION_COUNT FROM t_charging_station WHERE del = 0";
-        List<Record> list = Db.find(sql);
+        String stationType = getPara("stationType");
+        StringBuffer sql = new StringBuffer();
+        sql.append(" SELECT");
+        sql.append(" COUNT(*) STATION_COUNT");
+        sql.append(" FROM");
+        sql.append(" t_charging_station");
+        sql.append(" WHERE");
+        sql.append(" del = 0");
+
+        //如果选择的优易充小站，显示对应优易充小站的数量
+        if(stationType!=null && stationType.equals("2")){
+            sql.append(" AND type = 4");
+        }
+
+
+        List<Record> list = Db.find(sql.toString());
         super.respJsonObject(toListMap(list));
     }
 
