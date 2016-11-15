@@ -791,6 +791,7 @@
     top: 170px;
     right: 60px;
     background-image: url(/xiyuanweb-charging/static/css/imgs/station-list/video_camera.png);
+    cursor: pointer;
 }
 
 .hiddenDiv{
