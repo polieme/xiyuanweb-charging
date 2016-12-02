@@ -393,6 +393,7 @@ public class StationController extends XyController
     * @param initCount:第几页
     * @date 2016-11-2
     * @author zhangpeng
+    * @description 2016-11-15 增加列表显示运营商下面的充电站
     * */
     @RequestParams({
             "*String:initCount",
@@ -401,6 +402,8 @@ public class StationController extends XyController
     public void getStationList(){
         int initCount = Integer.parseInt(getPara("initCount"));
         String stationType = getPara("stationType");//获取充电站类型
+        String operationId = getPara("operationId");//运营商ID
+
         StringBuffer sql = new StringBuffer();
         sql.append(" SELECT ");
         sql.append(" 	A.id, ");
@@ -412,6 +415,10 @@ public class StationController extends XyController
         sql.append(" LEFT JOIN t_pile_camera B ON B.station_id = A.id ");
         sql.append(" WHERE ");
         sql.append(" 	del = 0 ");
+
+        if(operationId!=null) {//增加运营商显示对应的菜单
+            sql.append(" AND A.operator_id = '" + operationId + "'");
+        }
         sql.append(" AND A.id IN ( ");
         sql.append(" 	SELECT ");
         sql.append(" 		station_id ");
@@ -454,7 +461,7 @@ public class StationController extends XyController
         qryPileStatusSql.append(" 	t_charging_pile A ");
         qryPileStatusSql.append(" WHERE ");
         qryPileStatusSql.append(" 	A.station_id = '"+stationId+"' ");
-        qryPileStatusSql.append(" 	AND A.run_status = 1 ");
+        qryPileStatusSql.append(" 	AND A.run_status = 1 AND A.del = 0 ");
         qryPileStatusSql.append(" UNION ALL ");
         //忙碌数量
         qryPileStatusSql.append(" SELECT ");
@@ -463,7 +470,7 @@ public class StationController extends XyController
         qryPileStatusSql.append(" 	t_charging_pile A ");
         qryPileStatusSql.append(" WHERE ");
         qryPileStatusSql.append(" 	A.station_id = '"+stationId+"' ");
-        qryPileStatusSql.append(" 	AND A.run_status IN (2,3,6,8) ");
+        qryPileStatusSql.append(" 	AND A.run_status IN (2,3,6,8) AND A.del = 0 ");
         qryPileStatusSql.append(" UNION ALL ");
         //离线数量
         qryPileStatusSql.append(" SELECT ");
@@ -472,7 +479,7 @@ public class StationController extends XyController
         qryPileStatusSql.append(" 	t_charging_pile A ");
         qryPileStatusSql.append(" WHERE ");
         qryPileStatusSql.append(" 	A.station_id = '"+stationId+"' ");
-        qryPileStatusSql.append(" 	AND A.run_status IN (0,4) ");
+        qryPileStatusSql.append(" 	AND A.run_status IN (0,4) AND A.del = 0 ");
         qryPileStatusSql.append(" UNION ALL ");
         //故障数量
         qryPileStatusSql.append(" SELECT ");
@@ -481,7 +488,7 @@ public class StationController extends XyController
         qryPileStatusSql.append(" 	t_charging_pile A ");
         qryPileStatusSql.append(" WHERE ");
         qryPileStatusSql.append(" 	A.station_id = '"+stationId+"' ");
-        qryPileStatusSql.append(" 	AND A.run_status IN (5,7) ");
+        qryPileStatusSql.append(" 	AND A.run_status IN (5,7) AND A.del = 0 ");
 
         Map<String,Object> resultMap = new HashMap();
         //查询交直流桩的数量
