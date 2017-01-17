@@ -8,7 +8,6 @@ Xy.Module05 = {};
 Xy.Module06 = {};
 Xy.Module07 = {};
 Xy.Module08 = {};
-
 Xy.Module01.refresh = function () {
 
     var showRunningDays = function () {
@@ -61,7 +60,7 @@ Xy.Module01.refresh = function () {
     showRunningDays();
 };
 Xy.Module02.refresh = function () {
-    Xy.requestApi('/operation/get_charge', {}, function (data) {
+    Xy.requestApi('/operation/get_charge', {owner_id:"null"}, function (data) {
         if (data) {
             // 当日充电电量
             $('#xy-module-02-01').html(data.daily_charge_quantity || 0);
@@ -76,7 +75,7 @@ Xy.Module02.refresh = function () {
 };
 
 Xy.Module03.refresh = function () {
-    Xy.requestApi('/operation/get_count', {}, function (data) {
+    Xy.requestApi('/operation/get_count', {owner_id:"null"}, function (data) {
         if (data) {
             // 充电站数量
             $('#xy-module-03-01').html(data.station_count || 0);
@@ -87,7 +86,7 @@ Xy.Module03.refresh = function () {
 };
 
 Xy.Module04.refresh = function () {
-    Xy.requestApi('/operation/get_pile_status', {}, function (data) {
+    Xy.requestApi('/operation/get_pile_status', {owner_id:"null"}, function (data) {
         // 1：空闲桩 ，2：只连接未充电，3：充电进行中, 4：GPRS通讯中断,5：检修中,6：预约，7：故障
         // 1: 忙碌, 2：空闲，3：故障，4：离线，5：连接，6：检修，7：预约
         // 索引返回的数据，值页面class序号
@@ -175,11 +174,146 @@ Xy.Module06.refresh = function () {
         malfunctionStationCount: 0,
         offLineStationCount: 0
     };
+    /**
+     * 通过当前登录的运营商判断展示的两个充电站
+     */
+    var owner = "null";
+    getStationCode(owner);
+    function getStationCode(owner){
+        debugger;
+        //若登录人员为运维人员
+        if(owner=="null"){
+            //运维人员登录默认显示忘归酒店和丰台张仪村两个优易充小站的信息
+            getSingleStationInfo('1014507799978950178',1);
+            getSingleStationInfo('1014607105341453524',2);
+            //更多按钮显示全部站点的信息
+            $('#xy-module-fan-03').css('display', 'block');
+            $('#fan-tip1').html('丰台区腾势张仪村优易充小站');
+            $('#fan-tip2').html('忘归酒店东方远洋店优易充小站');
+            $('#xy-module-fan-01').attr('href','device.jsp?stationId='+1014507799978950178);
+            $('#xy-module-fan-02').attr('href','device.jsp?stationId='+1014607105341453524);
+        }else{
+            //此处进行判断，若该运营商所属的充电站数量小于等于2，则不展示更多按键，并清除更多按钮上的连接信息
+            Xy.requestApi('/operation/returnInfo', {owner: owner}, function (data){
+                if(data.length==1){
+                        //不显示更多
+                    getSingleStationInfo(data[0].ID,1);
+                    var links = data[0].ID;
+                    $('#fan-tip1').html(data[0].station_name);
+                    $('.link-fan-1').attr('href','device.jsp?stationId='+data[0].ID);
+                    $('#xy-module-fan-03').css('display','none');
+                }else if(data.length>=2){
+                        //不显示更多
+                    //显示站点名称
+                    var link  = data[0].ID;
+                    var links = data[1].ID
+                    $('#fan-tip1').html(data[0].station_name);
+                    $('#fan-tip2').html(data[1].station_name);
+                    $('#link-fan-1').attr('href','device.jsp?stationId='+data[0].ID);
+                    $('#link-fan-2').attr('href','device.jsp?stationId='+data[1].ID);
+                    //获取站点信息
+                    getSingleStationInfo(data[0].ID,1);
+                    getSingleStationInfo(data[1].ID,2);
+                    //是否显示更多按钮
+                    if(data.length==2) {
+                        $('#xy-module-fan-03').css('display', 'none');
+                    }else{
+                        $('#xy-module-fan-03').css('display', 'block');
+                    }
+                }
+            });
+        }
+    }
 
+    /**
+     * 获取单一站点的充电桩信息和充电信息
+     */
+    function getSingleStationInfo(id,num){
+        Xy.requestApi('/station/get_station_charge', {id: id}, function (data) {
+            if (data) {
+                // 当日充电电量
+                var leisureStationCount = 0, busyStationCount = 0,
+                    malfunctionStationCount = 0, offLineStationCount = 0,
+                    dcStationCount = 0, acStationCount = 0;
+                var pilelist = data.pileStatus;
+                for (var i = 0; i < pilelist.length; i++) {
+                    var run_status = pilelist[i].run_status;
+                    if (run_status == '1') {
+                        leisureStationCount = pilelist[i].count || 0;
+                    } else if (run_status == '3') {
+                        busyStationCount = busyStationCount+pilelist[i].count || 0;
+                    } else if (run_status == '7') {
+                        malfunctionStationCount = malfunctionStationCount+pilelist[i].count || 0;
+                    } else if (run_status == '4') {
+                        offLineStationCount = offLineStationCount+pilelist[i].count || 0;
+                    } else if (run_status == "8"){
+                        busyStationCount = busyStationCount+pilelist[i].count || 0;
+                    } else if (run_status == "9"){
+                        offLineStationCount = offLineStationCount + pilelist[i].count || 0;
+                    } else if (run_status == "2"){
+                        busyStationCount = busyStationCount + pilelist[i].count || 0;
+                    } else if (run_status == "5"){
+                        malfunctionStationCount = malfunctionStationCount + pilelist[i].count || 0;
+                    } else if (run_status == "6"){
+                        leisureStationCount = leisureStationCount + pilelist[i].count || 0;
+                    }}
+                var typelist = data.jlstatus;
+                for (var i = 0; i < typelist.length; i++) {
+                    var pile_type = typelist[i].pile_type;
+                    if (pile_type == '1') {
+                        dcStationCount = typelist[i].count || 0;
+                    } else if (pile_type == '2') {
+                        acStationCount = typelist[i].count || 0;
+                    }
+                }
+                var today = data.baseDay;
+                var todaysum = today[0].quantity;
+                // TODO 渲染数据的方法
+                refreshStationInfo({
+                    todayQuantity: todaysum||0,
+                    totalQuantity: data.base.quantity || 0,
+                    dcStationCount: dcStationCount,
+                    acStationCount: acStationCount,
+                    leisureStationCount: leisureStationCount,
+                    busyStationCount: busyStationCount,
+                    malfunctionStationCount: malfunctionStationCount,
+                    offLineStationCount: offLineStationCount
+                },num);
+            }
+        })
+    }
+
+    /**
+     * 刷新方法
+     */
+    function refreshStationInfo(option,num){
+
+        option = $.extend(defaultStationOption, option);
+        if(num==1){
+            $('#xy-module-06-01').html(option.dcStationCount);
+            $('#xy-module-06-02').html(option.acStationCount);
+            $('#xy-module-06-03').html(option.leisureStationCount);
+            $('#xy-module-06-04').html(option.busyStationCount);
+            $('#xy-module-06-05').html(option.malfunctionStationCount);
+            $('#xy-module-06-06').html(option.offLineStationCount);
+            Xy.Module06.changeChargingQuantity($('#xy-module-06-drcddl-1'), option.todayQuantity);
+            $('#xy-module-06-ljcdl-1').html(option.totalQuantity);
+        }else if(num==2){
+            option = $.extend(defaultStationOption, option);
+            $('#xy-module-06-07').html(option.dcStationCount);
+            $('#xy-module-06-08').html(option.acStationCount);
+            $('#xy-module-06-09').html(option.leisureStationCount);
+            $('#xy-module-06-10').html(option.busyStationCount);
+            $('#xy-module-06-11').html(option.malfunctionStationCount);
+            $('#xy-module-06-12').html(option.offLineStationCount);
+            Xy.Module06.changeChargingQuantity($('#xy-module-06-drcddl-2'), option.todayQuantity);
+            $('#xy-module-06-ljcdl-2').html(option.totalQuantity);
+        }
+    }
     /**
      * 刷新腾势（丰台）站数据
      */
-    var refreshXinShengStation = function (option) {
+    /*var refreshXinShengStation = function (option) {
         option = $.extend(defaultStationOption, option);
         $('#xy-module-06-01').html(option.dcStationCount);
         $('#xy-module-06-02').html(option.acStationCount);
@@ -189,11 +323,11 @@ Xy.Module06.refresh = function () {
         $('#xy-module-06-06').html(option.offLineStationCount);
         Xy.Module06.changeChargingQuantity($('#xy-module-06-drcddl-1'), option.todayQuantity);
         $('#xy-module-06-ljcdl-1').html(option.totalQuantity);
-    }
+    }*/
     /**
      * 刷新忘归站数据
      */
-    var refreshHuanChengXiLuStation = function (option) {
+    /*var refreshHuanChengXiLuStation = function (option) {
         option = $.extend(defaultStationOption, option);
         $('#xy-module-06-07').html(option.dcStationCount);
         $('#xy-module-06-08').html(option.acStationCount);
@@ -204,8 +338,9 @@ Xy.Module06.refresh = function () {
         Xy.Module06.changeChargingQuantity($('#xy-module-06-drcddl-2'), option.todayQuantity);
         $('#xy-module-06-ljcdl-2').html(option.totalQuantity);
     }
-
-    Xy.requestApi('/station/get_station_charge', {id: '1014507799978950178'}, function (data) {
+    */
+    /*
+    Xy.requestApi('/station/get_station_charge', {id: idOne}, function (data) {
         if (data) {
             // 当日充电电量
             var leisureStationCount = 0, busyStationCount = 0,
@@ -213,7 +348,7 @@ Xy.Module06.refresh = function () {
                 dcStationCount = 0, acStationCount = 0;
             var pilelist = data.pileStatus;
             for (var i = 0; i < pilelist.length; i++) {
-                var run_status = pilelist[i].run_status
+                var run_status = pilelist[i].run_status;
                 if (run_status == '1') {
                     leisureStationCount = pilelist[i].count || 0;
                 } else if (run_status == '3') {
@@ -235,7 +370,7 @@ Xy.Module06.refresh = function () {
                 }}
             var typelist = data.jlstatus;
             for (var i = 0; i < typelist.length; i++) {
-                var pile_type = typelist[i].pile_type
+                var pile_type = typelist[i].pile_type;
                 if (pile_type == '1') {
                     dcStationCount = typelist[i].count || 0;
                 } else if (pile_type == '2') {
@@ -256,7 +391,7 @@ Xy.Module06.refresh = function () {
                 offLineStationCount: offLineStationCount
             });
         }
-    })
+    })*/
     /**
      * 1：空闲桩 ，2：只连接未充电，3：充电进行中, 4：GPRS通讯中断,5：检修中,6：预约，7：故障 8：自动充满，9.长期离线
      */
@@ -273,7 +408,8 @@ Xy.Module06.refresh = function () {
      * offLineStationCount: number          // 离线
      * }}
      */
-    Xy.requestApi('/station/get_station_charge', {id: '1014607105341453524'}, function (data) {
+   /*
+    Xy.requestApi('/station/get_station_charge', {id: idTwo}, function (data) {
         if (data) {
             // 当日充电电量
             var leisureStationCount = 0, busyStationCount = 0,
@@ -281,7 +417,7 @@ Xy.Module06.refresh = function () {
                 dcStationCount = 0, acStationCount = 0;
             var pilelist = data.pileStatus;
             for (var i = 0; i < pilelist.length; i++) {
-                var run_status = pilelist[i].run_status
+                var run_status = pilelist[i].run_status;
                 if (run_status == '1') {
                     leisureStationCount = pilelist[i].count || 0;
                 } else if (run_status == '3') {
@@ -304,7 +440,7 @@ Xy.Module06.refresh = function () {
             }
             var typelist = data.jlstatus;
             for (var i = 0; i < typelist.length; i++) {
-                var pile_type = typelist[i].pile_type
+                var pile_type = typelist[i].pile_type;
                 if (pile_type == '1') {
                     dcStationCount = typelist[i].count || 0;
                 } else if (pile_type == '2') {
@@ -327,7 +463,7 @@ Xy.Module06.refresh = function () {
             });
         }
     })
-
+*/
 };
 
 Xy.Module07.refresh = function () {
@@ -348,12 +484,12 @@ Xy.Module07.refresh = function () {
         '67':'其他',
         '127':'其他'
     };
-    Xy.requestApi('/operation/get_fault', {}, function (data) {
+    Xy.requestApi('/operation/get_fault', {owner_id:"null"}, function (data) {
         $('#xy-module-07 b').html(6);
         for (var i = 0; i < 6; i++) {
             try {
                 $('#xy-module-07 .xy-status-group-' + (i + 1) + ' .xy-text').html(data[i].pile_name + ':' + mapper[data[i].fault_code]);
-                $('#xy-module-07 .xy-status-group-' + (i + 1) + ' .xy-time').html(data[i].record_time)
+                $('#xy-module-07 .xy-status-group-' + (i + 1) + ' .xy-time').html(data[i].record_time);
             } catch (e) {
             }
         }
@@ -553,7 +689,7 @@ Xy.Module08.refresh = function () {
         var colorArr = ['#FF0F00', '#FF6600', '#FF9E01', '#FCD202', '#F8FF01', '#B0DE09', '#04D215'];
         var chart1Arr = [];
         var chart2Arr = [];
-        Xy.requestApi('/operation/get_statictis_charge', {type: '2'}, function (data) {
+        Xy.requestApi('/operation/get_statictis_charge', {type: '2',owner_id:'null'}, function (data) {
             for (var i = 0; i < data.length; i++) {
                 var chartData = {
                     data: '',
@@ -569,7 +705,7 @@ Xy.Module08.refresh = function () {
             }
             refreshChart2(chart2Arr);
         });
-        Xy.requestApi('/operation/get_statictis_charge', {type: '1'}, function (data) {
+        Xy.requestApi('/operation/get_statictis_charge', {type: '1',owner_id:'null'}, function (data) {
             for (var i = 0; i < data.length; i++) {
                 var chartData = {
                     data: '',
