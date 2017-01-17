@@ -86,7 +86,7 @@ Xy.Module01.refresh = function () {
     showRunningDays();
 };
 Xy.Module02.refresh = function () {
-    Xy.requestApi('/operation/get_charge', {}, function (data) {
+    Xy.requestApi('/operation/get_charge', {owner_id:"null"}, function (data) {
         if (data) {
             // 当日充电电量
             $('#xy-module-02-01').html(data.daily_charge_quantity || 0);
@@ -101,7 +101,7 @@ Xy.Module02.refresh = function () {
 };
 
 Xy.Module03.refresh = function () {
-    Xy.requestApi('/operation/get_count', {}, function (data) {
+    Xy.requestApi('/operation/get_count', {owner_id:"null"}, function (data) {
         if (data) {
             // 充电站数量
             $('#xy-module-03-01').html(data.station_count || 0);
@@ -112,7 +112,7 @@ Xy.Module03.refresh = function () {
 };
 
 Xy.Module04.refresh = function () {
-    Xy.requestApi('/operation/get_pile_status', {}, function (data) {
+    Xy.requestApi('/operation/get_pile_status', {owner_id:"null"}, function (data) {
         // 1：空闲桩 ，2：只连接未充电，3：充电进行中, 4：GPRS通讯中断,5：检修中,6：预约，7：故障
         // 1: 忙碌, 2：空闲，3：故障，4：离线，5：连接，6：检修，7：预约
         // 索引返回的数据，值页面class序号
