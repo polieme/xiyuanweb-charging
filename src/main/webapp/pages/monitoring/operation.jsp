@@ -87,8 +87,8 @@
                             </a>
                         </div>
                         <div class="xy-title-right" id="xy-module-fan-02">
-                            <span id="fan-tip2">忘归酒店东方远洋店优易充小站</span>
-                            <a class = 'forlink' id = 'link-fan-2' href="device.jsp?stationId=1014607105341453524">
+                            <span id="fan-tip2">西城区中新佳园二区优易充小站</span>
+                            <a class = 'forlink' id = 'link-fan-2' href="device.jsp?stationId=1014609431783924297">
                                 查看
                             </a>
                         </div>
