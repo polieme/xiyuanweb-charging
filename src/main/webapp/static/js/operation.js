@@ -185,7 +185,7 @@ Xy.Module06.refresh = function () {
         if(owner=="null"){
             //运维人员登录默认显示忘归酒店和丰台张仪村两个优易充小站的信息
             getSingleStationInfo('1014507799978950178',1);
-            getSingleStationInfo('1014607105341453524',2);
+            getSingleStationInfo('1014609431783924297',2);
             //更多按钮显示全部站点的信息
             $('#xy-module-fan-03').css('display', 'block');
             $('#fan-tip1').html('丰台区腾势张仪村优易充小站');
