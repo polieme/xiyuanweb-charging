@@ -189,9 +189,9 @@ Xy.Module06.refresh = function () {
             //更多按钮显示全部站点的信息
             $('#xy-module-fan-03').css('display', 'block');
             $('#fan-tip1').html('丰台区腾势张仪村优易充小站');
-            $('#fan-tip2').html('忘归酒店东方远洋店优易充小站');
+            $('#fan-tip2').html('西城区中新佳园二区优易充小站');
             $('#xy-module-fan-01').attr('href','device.jsp?stationId='+1014507799978950178);
-            $('#xy-module-fan-02').attr('href','device.jsp?stationId='+1014607105341453524);
+            $('#xy-module-fan-02').attr('href','device.jsp?stationId='+1014609431783924297);
         }else{
             //此处进行判断，若该运营商所属的充电站数量小于等于2，则不展示更多按键，并清除更多按钮上的连接信息
             Xy.requestApi('/operation/returnInfo', {owner: owner}, function (data){
